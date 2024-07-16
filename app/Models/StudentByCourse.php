@@ -21,7 +21,7 @@ class StudentByCourse extends Model
 
     public function courseStudent()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class, 'student_id', 'id');
     }
 
     public function course()

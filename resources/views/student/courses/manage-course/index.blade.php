@@ -24,23 +24,21 @@
                     {{ $manageCourse->section }} | {{ date('g:i A', strtotime($manageCourse->class_start_time)) }} - {{ date('g:i A', strtotime($manageCourse->class_end_time)) }} {{ $manageCourse->days_of_the_week }}
                 </span>
             </div>
-            <div id="floatingMenu1" class="fixed right-10 top-[160px] transform -translate-y-1/2 bg-white shadow-lg rounded-md p-5 sm:p-6 md:p-7 lg:p-3 border-2 border-gray-400 text-black font-medium opacity-0 pointer-events-none transition-all duration-500">
-                <div class="text-center font-bold">Class</div>
-                <hr class="border-gray-300">
-                <a id="inviteCodeLink" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200  cursor-pointer">
-                    <i class="fa-solid fa-file"></i> Code
-                </a>
+            <div id="floatingMenu1" class="fixed right-10 top-[160px] transform -translate-y-1/2 bg-white shadow-lg rounded-md p-5 sm:p-6 md:p-7 lg:p-3 border-2  text-black font-medium opacity-0 pointer-events-none transition-all duration-500">
+                <form action="{{route('student.unenroll', ['userID' => auth()->user()->id,'assignmentTableID' => $manageCourse->id,'courseID' => $manageCourse->course_id])}}" method="post">
+                    @csrf       
+                    <button class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200  cursor-pointer">
+                    <i class="fa-solid fa-file"></i> Unenroll
+                    </button>
+                </form>
+                
             </div>
             <!-- Menu's -->
             <div id="floatingMenu" class="z-10 fixed right-4 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-md p-5 sm:p-6 md:p-7 lg:p-3 border-2 border-gray-400 text-black font-medium opacity-0 pointer-events-none transition-all duration-500">
                 <div class="text-center font-bold">View</div>
                 <hr class="border-gray-300">
                 <a href="#" @click.prevent="openClassworkModal()" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
-                    <i class="fa-solid fa-file"></i> Classwork
-                </a>
-                <hr class="border-gray-300">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
-                    <i class="fa-solid fa-users"></i> People
+                    <i class="fa-solid fa-file"></i> People
                 </a>
                 <hr class="border-gray-300">
                 <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
@@ -53,75 +51,43 @@
             </div>
             
             <!-- Classwork Modal -->
-            <div id="classworkModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+            <div id="studentModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
                 <div class="fixed inset-0 bg-gray-800 bg-opacity-75"></div>
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full z-50">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold text-black">Add Classwork</h2>
+                        <h2 class="text-xl font-semibold text-black">People</h2>
                         <button id="closeClassworkModal" class="text-lg text-black">X</button>
                     </div>
 
                     <!-- Modal body -->
-                    
-                    <form id="classworkForm" action="{{ route('teacher.teacher.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id])}}" method="POST" onsubmit="logClasswork(event)" enctype="multipart/form-data">
-                        @csrf
-                        <div class="text-gray-500">
-                            Classwork Content
-                        </div>
-                        <div id="editor1" contenteditable="true" class="border p-2 mt-2 rounded h-40 bg-white overflow-y-auto text-black"
-                            placeholder="Enter your Classwork Content here..." ></div>
-                        <input type="hidden" name="content1" id="content1">
-                        <div class="editor-toolbar">
-                            <button class="text-black" type="button" onclick="formatText('bold')" title="Bold"><strong>B</strong></button>
-                            <button class="text-black" type="button" onclick="formatText('italic')" title="Italic"><em>I</em></button>
-                            <button class="text-black" type="button" onclick="formatText('underline')" title="Underline"><u>U</u></button>
-                        </div>
-                        {{-- Select --}}
-                        <div class="relative" >
-                            <select id="editor2" class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2.5 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500 hover:bg-gray-100 " required>
-                              <option data-id="Practice Problem" >Practice Problems</option>
-                              <option data-id="Assignment">Assignments</option>
-                              <option data-id="Module">Module</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9 11l3 3 3-3h-6z"/></svg>
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Teacher section -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Instructor</h3>
+                            <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                                <div class="p-4 flex items-center">
+                                    <img src="teacher.jpg" alt="Teacher" class="w-12 h-12 rounded-full mr-4">
+                                    <p class="text-base font-medium text-gray-800">{{$manageCourse->teacher->name}}</p>
+                                </div>
                             </div>
                         </div>
-                        <input type="hidden" name="content2" id="content2">
-                        {{-- Upload File --}}
-                        <div class="max-w-sm">
-                            <label class="block">
-                              <span class="sr-only">Choose profile photo</span>
-                              Choose profile photo
-                              <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
-                                file:me-4 file:py-2 file:px-4
-                                file:rounded-lg file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-blue-600 file:text-white
-                                hover:file:bg-blue-700
-                                file:disabled:opacity-50 file:disabled:pointer-events-none
-                                dark:text-neutral-500
-                                dark:file:bg-blue-500
-                                dark:hover:file:bg-blue-400
-                                "
-                                multiple
-                                onchange="displaySelectedFiles(this)
-                                "
-                              >
-                            </label>
-                          </div>
-                        
-                          <div id="fileList" class="mt-4 text-black">
-                             {{-- File names will be displayed here --}}
-                          </div>
-                          
-                                 
-                          
-                        <div class="flex justify-end mt-2">
-                            <button type="submit" id="addButton"  class="bg-blue-500 text-white px-4 py-2 rounded ">Add</button>
+                    
+                        <!-- Student section -->
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Students</h3>
+                        @foreach ($enrolledStudent->sortBy('courseStudent.name') as $enrolledStudents)
+                        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                            <div class="p-4 flex items-center">
+                                <img src="student.jpg" alt="Student" class="w-12 h-12 rounded-full mr-4">
+                                <p class="text-base font-medium text-gray-800">{{$enrolledStudents->courseStudent->name}}</p>
+                            </div>
                         </div>
-                    </form>
-                   
+                        @endforeach
+                        <div>
+                            
+                            
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -219,6 +185,7 @@
                                                 @endif
                                                 
                                             @endif
+                                            
                                             <div x-cloak x-data="{ showModal: false, contentId: {{ $content['content_id'] }} }">
                                                 <div class="p-3 w-28 ml-3 mr-3 text-sm text-center text-gray-500 border rounded-md cursor-pointer border-gray-400 hover:border-blue-500 hover:text-black"
                                                     @click="showModal = true">Click to view</div>
@@ -245,6 +212,104 @@
                                                         <div class=" p-2 rounded h-auto text-lg bg-white overflow-y-auto">
                                                             {!! $content['content'] !!}
                                                         </div>
+                                                        @if ($type ==="Classwork")
+                                                            @foreach ($file as $files)
+                                                            {{-- <li class="mb-2">
+                                                                <a href="{{ url('/classroom/files/' . $files->id) }}" class="text-blue-500 hover:underline" target="_blank">
+                                                                    {{ $files->classwork_file }}
+                                                                </a>
+                                                            </li> --}}
+                                                            @if ($content['content_id'] === $files->classwork_id)
+                                                            <li class="mb-2 flex items-center border rounded p-2">
+                                                                <img  src="{{ route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg']) }}" alt="{{ $files->classwork_file }}" class="w-16 h-16 object-cover mr-3">
+                                                                <div  x-cloak x-data="{ showModal1: false, contentId: {{ $content['content_id'] }}}">
+                                                                    
+                                                                    <a @click="showModal1 = true"  class="text-blue-500 hover:underline">{{ $files->classwork_file }}</a>
+                                                                    <div class="text-gray-500 text-sm">{{ strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION)) }}</div>
+                                                        
+                                                                            <div x-show="showModal1" x-cloak
+                                                                                    x-transition:enter="transition ease-out duration-300"
+                                                                                    x-transition:enter-start="opacity-0 transform scale-95"
+                                                                                    x-transition:enter-end="opacity-100 transform scale-100"
+                                                                                    x-transition:leave="transition ease-in duration-200"
+                                                                                    x-transition:leave-start="opacity-100 transform scale-100"
+                                                                                    x-transition:leave-end="opacity-0 transform scale-95"
+                                                                                    @click.away="showModal = false"
+                                                                                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                                                                    
+                                                                                    
+                                                                                        <iframe frameborder="0" src="{{ route('student.classroom.files.show', ['id' => $files->id]) }}#toolbar=0&scrollbar=10&view=FitH" width="600" height="800" style=" overflow: auto;"></iframe>
+                                                                                   
+                                                                                                
+                                                                                    <div class="fixed top-0 right-0 m-4">
+                                                                                        <button class="close-btn flex items-center justify-center rounded-full" @click="showModal1 = false">
+                                                                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                                                            </svg>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    
+                                                                                    <style>
+                                                                                        .close-btn {
+                                                                                            background: radial-gradient(circle at center, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 1));
+                                                                                            width: 40px;
+                                                                                            height: 40px;
+                                                                                        }
+
+                                                                                        iframe {
+                                                                                            pointer-events: none; /* Ensure no interaction, including tooltip, on iframe */
+                                                                                        }
+                                                                                        .iframe-container {
+                                                                                            pointer-events: all; /* Ensure the container is interactive */
+                                                                                        }
+
+                                                                                    </style>
+                                                                                        
+                                                                                        {{-- <div class="flex justify-end mt-4">
+                                                                                            <button class="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-md"
+                                                                                                    @click="showModal1 = false">
+                                                                                                    Close
+                                                                                            </button>
+                                                                                       
+                                                                                    </div> --}} 
+                                                                </div>
+                                                            </li>
+                                                            @endif
+                                                           
+                                                            @endforeach
+                                                        @else
+                                                            
+                                                        @endif
+                                                        <div id="countdown" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4" value="August 26, 2024 9:00pm"></div> 
+                                                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                                                            <div class="flex justify-between items-center mb-4">
+                                                                <h3 class="text-lg font-semibold">Your work</h3>
+                                                                <span class="text-green-600">Assigned</span>
+                                                            </div>
+                                                            <div class="flex justify-between items-center">
+                                                                <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
+                                                                file:me-4 file:py-2 file:px-4
+                                                                file:rounded-lg file:border-0
+                                                                file:text-sm file:font-semibold
+                                                                file:bg-blue-600 file:text-white
+                                                                hover:file:bg-blue-700
+                                                                file:disabled:opacity-50 file:disabled:pointer-events-none
+                                                                dark:text-neutral-500
+                                                                dark:file:bg-blue-500
+                                                                dark:hover:file:bg-blue-400
+                                                                file:before:content-['Add_or_Create']
+                                                                "
+                                                                
+                                                                multiple
+                                                                onchange="displaySelectedFiles(this)
+                                                                "
+                                                            >
+                                                                <button class="px-4 py-2 bg-gray-300 text-gray-500 rounded-md cursor-not-allowed" disabled>Mark as done</button>
+                                                            </div>
+                                                            <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p>
+                                                        </div>
+                                            
+                                                        
                                                         <div class="flex justify-end mt-4">
                                                             <button class="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-md"
                                                                     @click="showModal = false">
@@ -261,8 +326,8 @@
                                                     </button>
                                                     <div x-cloak x-show="open" @click.away="open = false" class="dropdown-content absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
                                                         <div x-data="{ open: false }" class="relative">
-                                                            <a href="#" @click.prevent="open = true" class="block px-4 py-2 w-full text-sm hover:rounded-md text-gray-700 hover:bg-gray-100 hover:text-black focus:outline-none">
-                                                                Edit
+                                                            <a href="#"  class="block px-4 py-2 w-full text-sm hover:rounded-md text-gray-700 hover:bg-gray-100 hover:text-black focus:outline-none">
+                                                                Copy link
                                                             </a>
                     
                                                             <!-- Modal -->
@@ -341,9 +406,7 @@
                     
                                                             <input type="hidden" name="content_id" value="{{ $content['content_id'] }}">
                                                             
-                                                            <button type="submit" class="text-left block px-4 py-2 w-full text-sm hover:rounded-md text-gray-700 hover:bg-gray-100 hover:text-black focus:outline-none"> 
-                                                                Remove 
-                                                            </button>
+                                                            
                                                         </form>
                                                     </div>
                                                 </div>
@@ -448,7 +511,7 @@ function updateInput() {
 <script>
     //code for toggling Classwork Modal
     document.addEventListener('DOMContentLoaded', function() {
-        const classworkModal = document.getElementById('classworkModal');
+        const classworkModal = document.getElementById('studentModal');
         const openClassworkModalButton = document.querySelector('#floatingMenu a[href="#"]');
         const closeClassworkModalButton = document.getElementById('closeClassworkModal');
 
@@ -472,6 +535,7 @@ function updateInput() {
     #toggleButton2 {
         transition: opacity 0.5s ease-in-out;
     }
+    
 </style>
 
 <script>
@@ -653,4 +717,43 @@ function postContent() {
 
 
 
+</script>
+<script>
+    let deadlineTime;
+
+    function setDeadline() {
+        const deadlineInput = document.getElementById('deadline').value;
+        deadlineTime = new Date(deadlineInput);
+        startCountdown();
+    }
+
+    function startCountdown() {
+        const countdownElement = document.getElementById('countdown');
+        const interval = setInterval(() => {
+            const now = new Date();
+            const distance = deadlineTime - now;
+
+            if (distance < 0) {
+                clearInterval(interval);
+                countdownElement.innerHTML = 'Deadline has passed';
+            } else {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+            }
+        }, 1000);
+    }
+
+    function displaySelectedFiles(input) {
+        const fileList = input.files;
+        const fileListDisplay = document.getElementById('file-list');
+        fileListDisplay.innerHTML = '';
+        for (let i = 0; i < fileList.length; i++) {
+            const listItem = document.createElement('li');
+            listItem.textContent = fileList[i].name;
+            fileListDisplay.appendChild(listItem);
+        }
+    }
 </script>

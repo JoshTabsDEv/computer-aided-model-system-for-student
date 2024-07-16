@@ -82,4 +82,15 @@ class StudentController extends Controller
         return redirect()->route('student.student.dashboard')->with('success', 'Enrolled successfully.');
 
     }
+
+    public function unenroll(Request $request, $userID, $assignmentTableID, $courseID){
+        
+      
+         $student = StudentByCourse::where('course_assignment_id',$assignmentTableID)
+         ->where('student_id' , $userID);
+         $student->delete();
+        
+          return redirect()->route('student.student.dashboard')->with('success', 'Unenrolled successfully.');
+
+    }
 }

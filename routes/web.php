@@ -96,8 +96,15 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'index'])
     ->name('student.dashboard');
 
+    Route::get('/classroom/files/{id}', [FileController::class, 'showFile'])
+    ->name('classroom.files.show');
+
     Route::post('/join-class',[StudentController::class, 'joinClass'])
     ->name('joinClass');
+
+    Route::post('/unenroll/{userID}/{assignmentTableID}/{courseID}',[StudentController::class, 'unenroll'])
+    ->name('unenroll');
+
 
     //Teacher-assign courses controller
     Route::get('/my-courses', [TeacherCourseController::class, 'class_load'])->name('teachercourses.index');

@@ -9,6 +9,7 @@ use App\Models\CourseAssignment;
 use App\Models\AssignCourseContent;
 use App\Models\AssignCourseAnnouncement;
 use App\Models\CourseContentClasswork;
+use App\Models\StudentByCourse;
 use App\Models\CourseClassworkFiles;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -23,7 +24,7 @@ class StudentCourseController extends Controller
      */
     public function index($userID, $assignmentTableID, $courseID)
     {
-        $teacherId = Auth::id();
+        $user = Auth::id();
 
         
 
@@ -33,6 +34,10 @@ class StudentCourseController extends Controller
                             ->with('course')
                             ->firstOrFail();
 
+        $enrolledStudent = StudentByCourse::where('course_assignment_id',$assignmentTableID)
+                            ->with('courseStudent')
+                            ->get();
+
             
 
         $courseContent = AssignCourseContent::where('course_assignments_id', $assignmentTableID)
@@ -40,6 +45,7 @@ class StudentCourseController extends Controller
                             ->with('courseAnnouncements')
                             ->orderBy('created_at', 'desc')
                             ->get();
+                            
         $classwork_files = CourseClassworkFiles::all();
                           
 
@@ -64,16 +70,16 @@ class StudentCourseController extends Controller
                 ];
             }
             
-            // foreach ($content->courseClasswork as $classwork) {
-            //     $classworkByAssignment[$contentId][] = [
-            //         'content_id' => $classwork->id,
-            //         'content' => $classwork->classwork,
-            //         'type' => 'Classwork',
-            //         'type_of_classwork' => $classwork->type,
-            //         'created_at' => $classwork->created_at,
-            //         'updated_at' => $classwork->updated_at,
-            //     ];
-            // }
+            foreach ($content->courseClasswork as $classwork) {
+                $classworkByAssignment[$contentId][] = [
+                    'content_id' => $classwork->id,
+                    'content' => $classwork->classwork,
+                    'type' => 'Classwork',
+                    'type_of_classwork' => $classwork->type,
+                    'created_at' => $classwork->created_at,
+                    'updated_at' => $classwork->updated_at,
+                ];
+            }
         }
    
         return view('student.courses.manage-course.index', [
@@ -81,7 +87,8 @@ class StudentCourseController extends Controller
             'manageCourse' => $manageCourse, 
             'announcementsByAssignment' => $announcementsByAssignment,
             'classworkByAssignment' => $classworkByAssignment,
-            // 'file' => $classwork_files
+            'enrolledStudent' => $enrolledStudent,
+            'file' => $classwork_files
         ]);
     }
 
