@@ -88,6 +88,10 @@
                             </div>
                         </div>
                         <input type="hidden" name="content2" id="content2">
+                        <div class="mt-4">
+                            <label for="deadline" class="block text-gray-700">Set Deadline:</label>
+                            <input type="datetime-local" id="deadline" name="deadline" class="block w-full border border-gray-300 rounded py-2 px-3 mt-1 focus:outline-none focus:border-blue-500 text-black" required>
+                        </div>
                         {{-- Upload File --}}
                         <div class="max-w-sm">
                             <label class="block">
@@ -105,6 +109,7 @@
                                 dark:hover:file:bg-blue-400
                                 "
                                 multiple
+                                required
                                 onchange="displaySelectedFiles(this)
                                 "
                               >

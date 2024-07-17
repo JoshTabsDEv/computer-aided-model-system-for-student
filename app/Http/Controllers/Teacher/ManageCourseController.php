@@ -131,6 +131,7 @@ class ManageCourseController extends Controller
         $request->validate([
             'content1' => 'required|string', 
             'content2' => 'required|string',
+            'deadline' => 'required|date_format:Y-m-d\TH:i',
             'files.*' => 'required|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx'
         ]);
         
@@ -152,6 +153,7 @@ class ManageCourseController extends Controller
             $classwork = CourseContentClasswork::create([
                 'classwork' => $request->input('content1'),
                 'type' => $request->input('content2'),
+                'deadline' => $request->input('deadline'),
             ]);
 
             $fileData = [];

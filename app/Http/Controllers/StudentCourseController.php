@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CourseAssignment;
@@ -48,7 +49,7 @@ class StudentCourseController extends Controller
                             
         $classwork_files = CourseClassworkFiles::all();
                           
-
+        
                     
         $announcementsByAssignment = [];
         $classworkByAssignment = [];
@@ -71,11 +72,13 @@ class StudentCourseController extends Controller
             }
             
             foreach ($content->courseClasswork as $classwork) {
+                $deadlineFormatted = Carbon::parse($classwork->deadline)->format('M d, Y : h:i A');
                 $classworkByAssignment[$contentId][] = [
                     'content_id' => $classwork->id,
                     'content' => $classwork->classwork,
                     'type' => 'Classwork',
                     'type_of_classwork' => $classwork->type,
+                    'deadline'=> $deadlineFormatted,
                     'created_at' => $classwork->created_at,
                     'updated_at' => $classwork->updated_at,
                 ];

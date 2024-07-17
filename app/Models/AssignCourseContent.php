@@ -18,6 +18,7 @@ class AssignCourseContent extends Model
         'course_assignments_id',
         'announcement_id',
         'classwork_id',
+        
     ];
 
     public function courseAssignment()

@@ -273,45 +273,57 @@
                                                                                        
                                                                                     </div> --}} 
                                                                 </div>
+                                                                
                                                             </li>
+                                                            <div class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">{{$content['deadline']}}</div>
+                                                            
                                                             @endif
                                                            
                                                             @endforeach
+                                                            
+                                                            <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                                                                <div class="flex justify-between items-center mb-4">
+                                                                    <h3 class="text-lg font-semibold">Your work</h3>
+                                                                    <span class="text-green-600">Assigned</span>
+                                                                </div>
+                                                                <div class="flex justify-between items-center">
+                                                                    <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
+                                                                    file:me-4 file:py-2 file:px-4
+                                                                    file:rounded-lg file:border-0
+                                                                    file:text-sm file:font-semibold
+                                                                    file:bg-blue-600 file:text-white
+                                                                    hover:file:bg-blue-700
+                                                                    file:disabled:opacity-50 file:disabled:pointer-events-none
+                                                                    dark:text-neutral-500
+                                                                    dark:file:bg-blue-500
+                                                                    dark:hover:file:bg-blue-400
+                                                                    file:before:content-['Add_or_Create']
+                                                                    "
+                                                                    
+                                                                    multiple
+                                                                    onchange="displaySelectedFiles(this)
+                                                                    "
+                                                                >
+                                                                    
+                                                                </div>
+                                                                {{-- <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p> --}}
+                                                            </div>
+                                                            <button class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md">Mark as done</button>
                                                         @else
                                                             
                                                         @endif
-                                                        <div id="countdown" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4" value="August 26, 2024 9:00pm"></div> 
-                                                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                                                            <div class="flex justify-between items-center mb-4">
-                                                                <h3 class="text-lg font-semibold">Your work</h3>
-                                                                <span class="text-green-600">Assigned</span>
-                                                            </div>
-                                                            <div class="flex justify-between items-center">
-                                                                <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
-                                                                file:me-4 file:py-2 file:px-4
-                                                                file:rounded-lg file:border-0
-                                                                file:text-sm file:font-semibold
-                                                                file:bg-blue-600 file:text-white
-                                                                hover:file:bg-blue-700
-                                                                file:disabled:opacity-50 file:disabled:pointer-events-none
-                                                                dark:text-neutral-500
-                                                                dark:file:bg-blue-500
-                                                                dark:hover:file:bg-blue-400
-                                                                file:before:content-['Add_or_Create']
-                                                                "
-                                                                
-                                                                multiple
-                                                                onchange="displaySelectedFiles(this)
-                                                                "
-                                                            >
-                                                                <button class="px-4 py-2 bg-gray-300 text-gray-500 rounded-md cursor-not-allowed" disabled>Mark as done</button>
-                                                            </div>
-                                                            <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p>
-                                                        </div>
+                                
+                                                        
                                             
                                                         
                                                         <div class="flex justify-end mt-4">
-                                                            <button class="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-md"
+                                                            @if ($type==="Classwork")
+                                                            <button class="px-4 py-2 mx-4 bg-blue-500 hover:bg-blue-700 text-white rounded-md">
+                                                                    Submit
+                                                            </button>
+                                                            @endif
+                                                           
+                                                            <button class="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded-md"
                                                                     @click="showModal = false">
                                                                     Close
                                                             </button>
@@ -717,43 +729,4 @@ function postContent() {
 
 
 
-</script>
-<script>
-    let deadlineTime;
-
-    function setDeadline() {
-        const deadlineInput = document.getElementById('deadline').value;
-        deadlineTime = new Date(deadlineInput);
-        startCountdown();
-    }
-
-    function startCountdown() {
-        const countdownElement = document.getElementById('countdown');
-        const interval = setInterval(() => {
-            const now = new Date();
-            const distance = deadlineTime - now;
-
-            if (distance < 0) {
-                clearInterval(interval);
-                countdownElement.innerHTML = 'Deadline has passed';
-            } else {
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
-            }
-        }, 1000);
-    }
-
-    function displaySelectedFiles(input) {
-        const fileList = input.files;
-        const fileListDisplay = document.getElementById('file-list');
-        fileListDisplay.innerHTML = '';
-        for (let i = 0; i < fileList.length; i++) {
-            const listItem = document.createElement('li');
-            listItem.textContent = fileList[i].name;
-            fileListDisplay.appendChild(listItem);
-        }
-    }
 </script>

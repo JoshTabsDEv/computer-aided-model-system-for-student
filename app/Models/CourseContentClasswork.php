@@ -17,6 +17,7 @@ class CourseContentClasswork extends Model
         'classwork_id',
         'classwork',
         'type',
+        'deadline',
     ];
 
     public function courseContent()
