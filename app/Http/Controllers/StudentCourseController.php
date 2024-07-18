@@ -11,6 +11,7 @@ use App\Models\AssignCourseContent;
 use App\Models\AssignCourseAnnouncement;
 use App\Models\CourseContentClasswork;
 use App\Models\StudentByCourse;
+use App\Models\StudentClasswork;
 use App\Models\CourseClassworkFiles;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -33,6 +34,7 @@ class StudentCourseController extends Controller
 
         $manageCourse = CourseAssignment::where('id', $assignmentTableID)
                             ->with('course')
+                            ->with('teacher')
                             ->firstOrFail();
 
         $enrolledStudent = StudentByCourse::where('course_assignment_id',$assignmentTableID)
@@ -79,11 +81,14 @@ class StudentCourseController extends Controller
                     'type' => 'Classwork',
                     'type_of_classwork' => $classwork->type,
                     'deadline'=> $deadlineFormatted,
+                    'deadline_timestamp' => $classwork->deadline,
                     'created_at' => $classwork->created_at,
                     'updated_at' => $classwork->updated_at,
                 ];
             }
         }
+
+        $currentTime = Carbon::now();
    
         return view('student.courses.manage-course.index', [
             'class_code' => $course_code,
@@ -91,7 +96,8 @@ class StudentCourseController extends Controller
             'announcementsByAssignment' => $announcementsByAssignment,
             'classworkByAssignment' => $classworkByAssignment,
             'enrolledStudent' => $enrolledStudent,
-            'file' => $classwork_files
+            'file' => $classwork_files,
+            'current_time' => $currentTime
         ]);
     }
 
@@ -135,33 +141,11 @@ class StudentCourseController extends Controller
 
     public function postClasswork(Request $request, $userID, $assignmentTableID, $courseID,)
     {
-       
+        $user = Auth::id();
 
         $request->validate([
-            'content1' => 'required|string', 
-            'content2' => 'required|string',
             'files.*' => 'required|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx'
         ]);
-        
-       
-        // // Check if there's an existing record with the assignment ID
-        // $content = CourseContentClasswork::where('id', $assignmentTableID)
-        //     ->whereNull('classwork')
-        //     ->first();
-
-    
-        // if ($content) {
-        //     // Update existing record with the new classwork
-        //     $content->update([
-        //         'classwork' => $request->input('content1'),
-        //         'type' => $request->input('content2'),
-        //     ]);
-        // } else {
-            // Create a new record
-            $classwork = CourseContentClasswork::create([
-                'classwork' => $request->input('content1'),
-                'type' => $request->input('content2'),
-            ]);
 
             $fileData = [];
             if($files=$request->file('files')){
@@ -171,45 +155,24 @@ class StudentCourseController extends Controller
                     $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
                     $extension = $file->getClientOriginalExtension();
                     $fileNameToStore = $filename.'_'.time().'.'.$extension;
-                    
-
-                    if (in_array($extension, ['jpeg', 'png', 'jpg', 'gif', 'svg'])) {
-                        // Generate a thumbnail for image files
-                        $thumbnail = Image::make($file)->resize(150, 150)->stream();
-                        Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore, $thumbnail->__toString());
-                    } elseif ($extension == 'pdf') {
-                        // Generate a thumbnail for PDF files
-                        $pdf = new Imagick($file->getPathname() . '[0]'); // Get the first page
-                        $pdf->setImageFormat('jpeg');
-                        $pdf->thumbnailImage(150, 150, true, true);
-                        Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore . '.jpg', $pdf);
-                    }
-
-                    $path = $file->storeAs('public/classwork_files', $fileNameToStore);
+                    $path = $file->storeAs('public/classwork_files/student', $fileNameToStore);
                    
                     $fileData[] = [
-                        'classwork_file' => $fileNameToStore,
-                        'classwork_id' => $classwork->id,             
+                        'class_files' => $fileNameToStore,
+                        'student_id' => $user,
+                        'course_assignment_id'=> $assignmentTableID          
                     ];
                 }
                 
             }
             
-            CourseClassworkFiles::insert($fileData);
+            StudentClasswork::insert($fileData);
 
-
-            AssignCourseContent::create([
-                'course_assignments_id' => $assignmentTableID,
-                'classwork_id' => $classwork->id,
-            ]);
-        // }
-    
-        return redirect()->route('teacher.teacher.index', [
+        return redirect()->route('student.student.index', [
             'userID' => $userID,
             'assignmentTableID' => $assignmentTableID,
             'courseID' => $courseID,
-        ])->with('success', 'Classwork added successfully.')
-          ->with('courseFiles', CourseClassworkFiles::where('classwork_id', $classwork->id)->get());
+        ])->with('success', 'Classwork submitted successfully.');
     }
 
 //    public function removeAnnouncement($userID, $assignmentTableID, $courseID, $contentID, $announcementID)

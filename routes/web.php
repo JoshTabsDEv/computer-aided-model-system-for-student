@@ -113,6 +113,8 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
     ->name('student.index');
     Route::post('/post-announcement/{userID}/{assignmentTableID}/{courseID}', [StudentCourseController::class, 'postAnnouncement'])
     ->name('teacher.postAnnouncement');// add announcement
+    Route::post('/post-classwork/{userID}/{assignmentTableID}/{courseID}', [StudentCourseController::class, 'postClasswork'])
+    ->name('student.postClasswork');// add announcement
    
     Route::put('/remove-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'removeAnnouncement'])
     ->name('teacher.removeAnnouncement');//remove announcement
