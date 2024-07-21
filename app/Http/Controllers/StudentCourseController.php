@@ -12,6 +12,7 @@ use App\Models\AssignCourseAnnouncement;
 use App\Models\CourseContentClasswork;
 use App\Models\StudentByCourse;
 use App\Models\StudentClasswork;
+use App\Models\Solution;
 use App\Models\CourseClassworkFiles;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -50,6 +51,9 @@ class StudentCourseController extends Controller
                             ->get();
                             
         $classwork_files = CourseClassworkFiles::all();
+        $solution_files = Solution::all();
+       $student_classwork = StudentClasswork::where('course_assignment_id', $assignmentTableID)
+                            ->get();
                           
         
                     
@@ -96,7 +100,9 @@ class StudentCourseController extends Controller
             'announcementsByAssignment' => $announcementsByAssignment,
             'classworkByAssignment' => $classworkByAssignment,
             'enrolledStudent' => $enrolledStudent,
+            'student_file' => $student_classwork,
             'file' => $classwork_files,
+            'solution' => $solution_files,
             'current_time' => $currentTime
         ]);
     }
@@ -139,7 +145,7 @@ class StudentCourseController extends Controller
         ])->with('success', 'Announcement added successfully.');
     }
 
-    public function postClasswork(Request $request, $userID, $assignmentTableID, $courseID,)
+    public function postClasswork(Request $request, $userID, $assignmentTableID, $courseID,$classwork_id)
     {
         $user = Auth::id();
 
@@ -160,7 +166,8 @@ class StudentCourseController extends Controller
                     $fileData[] = [
                         'class_files' => $fileNameToStore,
                         'student_id' => $user,
-                        'course_assignment_id'=> $assignmentTableID          
+                        'course_assignment_id'=> $assignmentTableID,  
+                        'classwork_id' => $classwork_id       
                     ];
                 }
                 
@@ -312,6 +319,14 @@ public function removeAnnouncement($userID, $type, $assignmentTableID, $courseID
             ->header('Content-Type', $mimeType)
             ->header('Content-Disposition', 'inline; filename="' . basename($path) . '"');
     }
+
+    public function showSolution($id)
+    {
+        $solution = Solution::findOrFail($id);
+        $path = storage_path("app/public/classwork_files/solution/{$solution->solution_file}");
+
+        return response()->file($path);
+    } 
 
     /**
      * Show the form for editing the specified resource.

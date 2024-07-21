@@ -306,7 +306,6 @@
                                                                 <div class="flex items-center">
                                                                     <img src="<?php echo e($manageCourse->teacher->teacher_photo && Storage::exists('public/teacher_photos/' . $manageCourse->teacher->teacher_photo) ? asset('storage/teacher_photos/' . $manageCourse->teacher->teacher_photo) : asset('assets/img/user.png')); ?>" class="shadow-xl border-[.1px] border-gray-500 rounded-full w-9 object-contain mx-auto mr-2">
                                                                     <p><?php echo e($manageCourse->teacher->name); ?></p>
-                                                                    
                                                                 </div>
                                                             </div>
                                                             <div class=" p-2 rounded h-auto text-lg bg-white overflow-y-auto">
@@ -315,32 +314,26 @@
                                                             </div>
                                                             
                                                                 <?php if($type ==="Classwork"): ?>
-                                                                <form action="<?php echo e(route('student.student.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id])); ?>" method="POST" enctype="multipart/form-data">
-                                                                    <?php echo csrf_field(); ?>
-                                                                <?php $__currentLoopData = $file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                
-                                                                <?php if($content['content_id'] === $files->classwork_id): ?>
-                                                                <li class="mb-2 flex items-center border rounded p-2">
-                                                                    <img  src="<?php echo e(route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg'])); ?>" alt="<?php echo e($files->classwork_file); ?>" class="w-16 h-16 object-cover mr-3">
-                                                                    <div  x-cloak x-data="{ showModal1: false, contentId: <?php echo e($content['content_id']); ?>}">
-                                                                        
-                                                                        <a @click="showModal1 = true"  class="text-blue-500 hover:underline"><?php echo e($files->classwork_file); ?></a>
-                                                                        <div class="text-gray-500 text-sm"><?php echo e(strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION))); ?></div>
-                                                            
-                                                                                <div x-show="showModal1" x-cloak
-                                                                                        x-transition:enter="transition ease-out duration-300"
-                                                                                        x-transition:enter-start="opacity-0 transform scale-95"
-                                                                                        x-transition:enter-end="opacity-100 transform scale-100"
-                                                                                        x-transition:leave="transition ease-in duration-200"
-                                                                                        x-transition:leave-start="opacity-100 transform scale-100"
-                                                                                        x-transition:leave-end="opacity-0 transform scale-95"
-                                                                                        @click.away="showModal = false"
-                                                                                        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                                                                                        
-                                                                                        
-                                                                                            <iframe frameborder="0" src="<?php echo e(route('student.classroom.files.show', ['id' => $files->id])); ?>#toolbar=0&scrollbar=10&view=FitH" width="600" height="800" style=" overflow: auto;"></iframe>
-                                                                                    
-                                                                                                    
+                                                                    <form action="<?php echo e(route('student.student.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id,'classwork_id' => $content['content_id']])); ?>" method="POST" enctype="multipart/form-data">
+                                                                        <?php echo csrf_field(); ?>
+                                                                <?php $__currentLoopData = $file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> 
+                                                                    <?php if($content['content_id'] === $files->classwork_id): ?>                                                                       
+                                                                        <li class="mb-2 flex items-center border rounded p-2">
+                                                                            <img  src="<?php echo e(route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg'])); ?>" alt="<?php echo e($files->classwork_file); ?>" class="w-16 h-16 object-cover mr-3">
+                                                                            <div  x-cloak x-data="{ showModal1: false, contentId: <?php echo e($content['content_id']); ?>}">
+                                                                                <a @click="showModal1 = true"  class="text-blue-500 hover:underline"><?php echo e($files->classwork_file); ?></a>
+                                                                                <div class="text-gray-500 text-sm"><?php echo e(strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION))); ?></div>
+                                                                                    <div x-show="showModal1" x-cloak
+                                                                                    x-transition:enter="transition ease-out duration-300"
+                                                                                    x-transition:enter-start="opacity-0 transform scale-95"
+                                                                                    x-transition:enter-end="opacity-100 transform scale-100"
+                                                                                    x-transition:leave="transition ease-in duration-200"
+                                                                                    x-transition:leave-start="opacity-100 transform scale-100"
+                                                                                    x-transition:leave-end="opacity-0 transform scale-95"
+                                                                                    @click.away="showModal = false"
+                                                                                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+
+                                                                                        <iframe frameborder="0" src="<?php echo e(route('student.classroom.files.show', ['id' => $files->id])); ?>#toolbar=0&scrollbar=10&view=FitH" width="600" height="800" style=" overflow: auto;"></iframe>  
                                                                                         <div class="fixed top-0 right-0 m-4">
                                                                                             <button class="close-btn flex items-center justify-center rounded-full" @click="showModal1 = false">
                                                                                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -348,30 +341,11 @@
                                                                                                 </svg>
                                                                                             </button>
                                                                                         </div>
-                                                                                        
-                                                                                        <style>
-                                                                                            .close-btn {
-                                                                                                background: radial-gradient(circle at center, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 1));
-                                                                                                width: 40px;
-                                                                                                height: 40px;
-                                                                                            }
-
-                                                                                            iframe {
-                                                                                                pointer-events: none; /* Ensure no interaction, including tooltip, on iframe */
-                                                                                            }
-                                                                                            .iframe-container {
-                                                                                                pointer-events: all; /* Ensure the container is interactive */
-                                                                                            }
-
-                                                                                        </style>
-                                                                                            
-                                                                                             
-                                                                    </div>
+                                                                                    </div>
+                                                                            </li>
+                                                                            <div class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4"><?php echo e($content['deadline']); ?></div>
                                                                     
-                                                                </li>
-                                                                <div class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4"><?php echo e($content['deadline']); ?></div>
-                                                                
-                                                                <?php endif; ?>
+                                                                    <?php endif; ?>
                                                             
                                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                 
@@ -415,14 +389,29 @@
                                                                     <?php endif; ?>
                                                                     
                                                                 </div>
-                                                                <button type="submit" class="px-4 py-2 mt-5 bg-blue-300 text-black-500 rounded-md w-full">Submit</button>
+                                                                <button type="submit" class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full">Mark as done</button>
+                                                                <p></p>
                                                             </form>
-                                                                <button class="px-4 py-2 mt-2 bg-green-300 text-black-500 rounded-md w-full">Mark as done</button>
-                                                                
-                                                                
-                                                            <?php else: ?>
-                                                           
-                                                            <?php endif; ?>
+                                                            <?php $__currentLoopData = $student_file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student_files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                <?php if($student_files->classwork_id === $content['content_id'] && $student_files->student_id=== Auth::id()): ?>
+
+                                                                    <?php $__currentLoopData = $solution; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $solutions): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                        <?php if($solutions->classwork_id===$content['content_id']): ?>
+                                                                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                                                                            <div class="mt-4 p-4 bg-green-100 rounded-lg">
+                                                                                <h3 class="text-lg font-semibold">Solution</h3>
+                                                                                    
+                                                                                    <li class="mb-2 flex items-center border rounded p-2">
+                                                                                        <a href="<?php echo e(route('student.solutions.show', $solutions->id)); ?>" class="text-blue-500 hover:underline"><?php echo e(basename($solutions->solution_file)); ?></a>
+                                                                                        <div class="text-gray-500 text-sm ml-2"><?php echo e(strtoupper(pathinfo($solutions->solution_file, PATHINFO_EXTENSION))); ?></div>
+                                                                                    </li>
+                                                                            </div>
+                                                                        </div>
+                                                                        <?php endif; ?>
+                                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                <?php endif; ?>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php endif; ?>
                                                          
                                                           <?php if($type === "Announcement"): ?>
                                                           <div class="flex justify-end mt-4">

@@ -93,28 +93,49 @@
                             <input type="datetime-local" id="deadline" name="deadline" class="block w-full border border-gray-300 rounded py-2 px-3 mt-1 focus:outline-none focus:border-blue-500 text-black" required>
                         </div>
                         {{-- Upload File --}}
-                        <div class="max-w-sm">
-                            <label class="block">
-                              <span class="sr-only">Choose profile photo</span>
-                              Choose profile photo
-                              <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
-                                file:me-4 file:py-2 file:px-4
-                                file:rounded-lg file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-blue-600 file:text-white
-                                hover:file:bg-blue-700
-                                file:disabled:opacity-50 file:disabled:pointer-events-none
-                                dark:text-neutral-500
-                                dark:file:bg-blue-500
-                                dark:hover:file:bg-blue-400
-                                "
-                                multiple
-                                required
-                                onchange="displaySelectedFiles(this)
-                                "
-                              >
+                        <div class="max-w-sm mt-4">
+                            <label class="block text-gray-700">
+                              Classwork File
                             </label>
-                          </div>
+                        
+                            <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
+                            file:me-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700
+                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                            dark:text-neutral-500
+                            dark:file:bg-blue-500
+                            dark:hover:file:bg-blue-400
+                            "
+                            multiple
+                            required
+                            onchange="displaySelectedFiles(this)
+                            "
+                          >
+                        </div>
+
+                        {{-- <div class="max-w-sm mt-4">
+                            <label class="block text-gray-700">
+                              Solution (*only if practice problem is selected)
+                            </label>
+                        
+                            <input id="solution_files" type="file" name="solution_files[]"class="block w-full text-sm text-gray-500
+                            file:me-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700
+                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                            dark:text-neutral-500
+                            dark:file:bg-blue-500
+                            dark:hover:file:bg-blue-400
+                            "
+                            multiple
+                          >
+                        </div> --}}
+                        
                         
                           <div id="fileList" class="mt-4 text-black">
                              {{-- File names will be displayed here --}}

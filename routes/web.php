@@ -98,6 +98,7 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
 
     Route::get('/classroom/files/{id}', [FileController::class, 'showFile'])
     ->name('classroom.files.show');
+    Route::get('/solutions/{id}', [StudentCourseController::class, 'showSolution'])->name('solutions.show');
 
     Route::post('/join-class',[StudentController::class, 'joinClass'])
     ->name('joinClass');
@@ -113,7 +114,7 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
     ->name('student.index');
     Route::post('/post-announcement/{userID}/{assignmentTableID}/{courseID}', [StudentCourseController::class, 'postAnnouncement'])
     ->name('teacher.postAnnouncement');// add announcement
-    Route::post('/post-classwork/{userID}/{assignmentTableID}/{courseID}', [StudentCourseController::class, 'postClasswork'])
+    Route::post('/post-classwork/{userID}/{assignmentTableID}/{courseID}/{classwork_id}', [StudentCourseController::class, 'postClasswork'])
     ->name('student.postClasswork');// add announcement
    
     Route::put('/remove-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'removeAnnouncement'])

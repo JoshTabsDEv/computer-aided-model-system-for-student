@@ -10,9 +10,11 @@ use App\Models\AssignCourseContent;
 use App\Models\AssignCourseAnnouncement;
 use App\Models\CourseContentClasswork;
 use App\Models\CourseClassworkFiles;
+use App\Models\Solution;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use App\Models\Course;
+
 use Imagick;
 
 
@@ -132,7 +134,8 @@ class ManageCourseController extends Controller
             'content1' => 'required|string', 
             'content2' => 'required|string',
             'deadline' => 'required|date_format:Y-m-d\TH:i',
-            'files.*' => 'required|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx'
+            'files.*' => 'required|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
+            'solution_files.*' => 'required|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx'
         ]);
         
        
@@ -166,11 +169,8 @@ class ManageCourseController extends Controller
                     $fileNameToStore = $filename.'_'.time().'.'.$extension;
                     
 
-                    if (in_array($extension, ['jpeg', 'png', 'jpg', 'gif', 'svg'])) {
-                        // Generate a thumbnail for image files
-                        $thumbnail = Image::make($file)->resize(150, 150)->stream();
-                        Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore, $thumbnail->__toString());
-                    } elseif ($extension == 'pdf') {
+                   
+                    if ($extension == 'pdf') {
                         // Generate a thumbnail for PDF files
                         $pdf = new Imagick($file->getPathname() . '[0]'); // Get the first page
                         $pdf->setImageFormat('jpeg');
@@ -187,8 +187,28 @@ class ManageCourseController extends Controller
                 }
                 
             }
+
+            $solutionFileData = [];
+            if($files=$request->file('solution_files')){
+                foreach ($files as $file) {
+
+                    $fileNameWithExt = $file->getClientOriginalName();
+                    $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileNameToStore = $filename.'_'.time().'.'.$extension;
+                    $path = $file->storeAs('public/classwork_files/solution', $fileNameToStore);
+                   
+                    $solutionFileData[] = [
+                        'solution_file' => $fileNameToStore,
+                        'course_assignment_id' => $assignmentTableID,
+                        'classwork_id' => $classwork->id      
+                    ];
+                }
+                
+            }
             
             CourseClassworkFiles::insert($fileData);
+            Solution::insert($solutionFileData);
 
 
             AssignCourseContent::create([
@@ -245,7 +265,7 @@ public function removeAnnouncement($userID, $type, $assignmentTableID, $courseID
             'userID' => $userID,
             'assignmentTableID' => $assignmentTableID,
             'courseID' => $courseID,
-        ])->with('success', 'Announcement removed successfully.');
+        ])->with('success', 'Classwor removed successfully.');
     }
 }
 
