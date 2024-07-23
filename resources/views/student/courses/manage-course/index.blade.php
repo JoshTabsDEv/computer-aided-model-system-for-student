@@ -249,7 +249,26 @@
                                                                                         </div>
                                                                                     </div>
                                                                             </li>
-                                                                            <div class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">{{$content['deadline']}}</div>
+                                                                            @if ($content['type_of_classwork'] === 'Practice Problem')
+                                                                                <div id="countdown" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4" x-data="{ deadline: new Date('{{ $content['deadline'] }}') }" x-init="setInterval(() => {
+                                                                                    let now = new Date().getTime();
+                                                                                    let distance = deadline - now;
+                                                                                    if (distance < 0) {
+                                                                                        document.getElementById('countdown').innerHTML = 'EXPIRED';
+                                                                                    } else {
+                                                                                        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                                                                        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                                                        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                                                                        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                                                                        document.getElementById('countdown').innerHTML = days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's ';
+                                                                                    }
+                                                                                }, 1000)">
+                                                                                </div>
+                                                                            @else
+                                                                                <div class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">{{$content['deadline']}}</div>
+                                                                            @endif
+                                                                            
+                                                                            
                                                                     
                                                                     @endif
                                                             
@@ -258,17 +277,25 @@
                                                                 <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                                                                     <div class="flex justify-between items-center mb-4">
                                                                         <h3 class="text-lg font-semibold">Your work</h3>
-                                                                    
-                                                                            @if (Carbon\Carbon::parse($content['deadline_timestamp'])->isPast())
-                                                                            <span class="text-red-600">
-                                                                                Missing
-                                                                            </span>
-                                                                            @else
-                                                                            <span class="text-green-600">
-                                                                                Assigned
-                                                                            </span>
-                                                                            @endif
-                                                                        
+                                                                        @php
+                                                                        $submitted = $student_file->where('classwork_id', $content['content_id'])
+                                                                                                ->where('student_id', Auth::id())
+                                                                                                ->isNotEmpty();
+                                                                        @endphp
+                                                                        @if (Carbon\Carbon::parse($content['deadline_timestamp'])->isPast() && !$submitted)
+                                                                        <span class="text-red-600">
+                                                                            Missing
+                                                                        </span>
+                                                                        @elseif(!$submitted)
+                                                                        <span class="text-green-600">
+                                                                            Assigned
+                                                                        </span>
+                                                                        @else
+                                                                        <span class="text-blue-600">
+                                                                            Submitted
+                                                                        </span>
+                                                                        @endif
+            
                                                                     </div>
                                                                     <div class="flex justify-between items-center">
                                                                         <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
@@ -729,4 +756,28 @@ function postContent() {
 
 
 
+</script>
+
+<script>
+    function logClasswork(event) {
+        event.preventDefault();
+        document.getElementById('content1').value = document.getElementById('editor1').innerHTML;
+        document.getElementById('content2').value = document.getElementById('editor2').value;
+        event.target.submit();
+    }
+    
+    function displaySelectedFiles(input) {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            const listItem = document.createElement('div');
+            listItem.textContent = file.name;
+            fileList.appendChild(listItem);
+        }
+    }
+
+    function formatText(command) {
+        document.execCommand(command, false, null);
+    }
 </script>
