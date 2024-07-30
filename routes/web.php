@@ -6,18 +6,23 @@ use App\Http\Controllers\Admin\Auth\DeanController;
 use App\Http\Controllers\Admin\Auth\ProgramController;
 use App\Http\Controllers\Admin\Auth\CourseController;
 use App\Http\Controllers\Admin\Auth\TeacherController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentCourseController;
 use App\Http\Controllers\Admin\Auth\TeacherCourseController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FileController;
+
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('classwork_files/thumbnails/{filename}', [FileController::class, 'showThumbnail'])->name('thumbnails.show');
+Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.show');
 
 Route::middleware('auth')->group(function () {
+   
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -80,6 +85,50 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::delete('/admin/teacher/deleteAssignCourse/{teacher_id}/{id}', [TeacherController::class, 'deleteAssignCourse'])->name('teacher.deleteAssignCourse');
   //  Route::get('teacher-course/id={id}', [TeacherController::class, 'assignCourse'])->name('teacher.assignCourse');
 
+});
+
+Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
+    
+    Route::get('/dashboard', function () {
+        return view('student.dashboard')->with('success', 'Welcome to your dashboard!');
+    })->name('dashboard');
+
+    Route::get('/dashboard', [StudentController::class, 'index'])
+    ->name('student.dashboard');
+
+    Route::get('/classroom/files/{id}', [FileController::class, 'showFile'])
+    ->name('classroom.files.show');
+    Route::get('/solutions/{id}', [StudentCourseController::class, 'showSolution'])->name('solutions.show');
+
+    Route::post('/join-class',[StudentController::class, 'joinClass'])
+    ->name('joinClass');
+
+    Route::post('/unenroll/{userID}/{assignmentTableID}/{courseID}',[StudentController::class, 'unenroll'])
+    ->name('unenroll');
+
+
+    //Teacher-assign courses controller
+    Route::get('/my-courses', [TeacherCourseController::class, 'class_load'])->name('teachercourses.index');
+    // ManageCourse for Teacher
+    Route::get('/student-course/{userID}/{assignmentTableID}/{courseID}', [StudentCourseController::class, 'index'])
+    ->name('student.index');
+    Route::post('/post-announcement/{userID}/{assignmentTableID}/{courseID}', [StudentCourseController::class, 'postAnnouncement'])
+    ->name('teacher.postAnnouncement');// add announcement
+    Route::post('/post-classwork/{userID}/{assignmentTableID}/{courseID}/{classwork_id}', [StudentCourseController::class, 'postClasswork'])
+    ->name('student.postClasswork');// add announcement
+   
+    Route::put('/remove-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'removeAnnouncement'])
+    ->name('teacher.removeAnnouncement');//remove announcement
+    Route::put('/update-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'updateAnnouncement'])
+    ->name('teacher.updateAnnouncement'); //update announcement
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+                ->name('logout');
 });
 
 

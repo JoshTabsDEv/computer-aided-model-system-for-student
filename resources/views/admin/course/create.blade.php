@@ -57,6 +57,8 @@
                         </select>
                         <x-input-error :messages="$errors->get('course_semester')" class="mt-2" />
                     </div>
+                   
+
                     <div class="flex mb-4 mt-5 justify-center">
                         <button type="submit" class="w-80 bg-blue-500 text-white px-4 py-2 rounded-md">
                             Save
@@ -74,3 +76,4 @@
     dashboardContentId="dashboardContent"
     toggleIconId="toggleIcon"
 />
+
