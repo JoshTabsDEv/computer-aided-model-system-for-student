@@ -43,7 +43,7 @@
                     <i class="fa-solid fa-users"></i> People
                 </a>
                 <hr class="border-gray-300">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
+                <a href="{{route('teacher.classwork.index', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id])}}" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
                     <i class="fa-solid fa-list-ol"></i> Scores
                 </a>
                 <hr class="border-gray-300">
@@ -116,7 +116,7 @@
                           >
                         </div>
 
-                        {{-- <div class="max-w-sm mt-4">
+                        <div class="max-w-sm mt-4">
                             <label class="block text-gray-700">
                               Solution (*only if practice problem is selected)
                             </label>
@@ -134,7 +134,7 @@
                             "
                             multiple
                           >
-                        </div> --}}
+                        </div>
                         
                         
                           <div id="fileList" class="mt-4 text-black">

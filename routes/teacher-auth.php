@@ -6,6 +6,7 @@ use App\Http\Controllers\Teacher\ProfileController;
 use App\Http\Controllers\Teacher\TeacherCourseController;
 use App\Http\Controllers\Teacher\ManageCourseController;
 use App\Http\Controllers\Teacher\ManageClassworkController;
+use App\Http\Controllers\StudentCourseController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:teacher')->prefix('teacher')->name('teacher.')->group(function () {
@@ -50,6 +51,8 @@ Route::middleware(['auth:teacher', 'verified'])->prefix('teacher')->name('teache
 
     Route::get('/manage-classwork/{userID}/{assignmentTableID}/{courseID}', [ManageClassworkController::class, 'index'])
     ->name('classwork.index');
+
+    Route::get('/classwork/{id}', [StudentCourseController::class, 'showClasswork'])->name('classwork.show');
 
     Route::post('/post-classwork/{userID}/{assignmentTableID}/{courseID}', [ManageCourseController::class, 'postClasswork'])
     ->name('teacher.postClasswork');// add classwork

@@ -204,7 +204,7 @@
                                                       
                                                         <div class="bg-white p-6 rounded-lg shadow-lg -mt-32 max-w-xl w-full mt-5 relative">
                                                             @if ($type === "Classwork")
-                                                            <button   @click="showModal = false" id="closeClassworkModal" class="absolute top-0 right-0 m-2 text-lg text-black">X</button>
+                                                            {{-- <button   @click="showModal = false" id="closeClassworkModal" class="absolute top-0 right-0 m-2 text-lg text-black">X</button> --}}
                                                             @endif
                                                             
                                                             <div x-cloak class="flex justify-between items-center border-b mb-4 w-full">
@@ -220,8 +220,7 @@
                                                             </div>
                                                             
                                                                 @if ($type ==="Classwork")
-                                                                    <form action="{{ route('student.student.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id,'classwork_id' => $content['content_id']])}}" method="POST" enctype="multipart/form-data">
-                                                                        @csrf
+                                                                    
                                                                 @foreach ($file as $files) 
                                                                     @if ($content['content_id'] === $files->classwork_id)                                                                       
                                                                         <li class="mb-2 flex items-center border rounded p-2">
@@ -249,12 +248,17 @@
                                                                                         </div>
                                                                                     </div>
                                                                             </li>
+                                                                            @php
+                                                                            $submitted = $student_file->where('classwork_id', $content['content_id'])
+                                                                                                    ->where('student_id', Auth::id())
+                                                                                                    ->isNotEmpty();
+                                                                            @endphp
                                                                             @if ($content['type_of_classwork'] === 'Practice Problem')
-                                                                                <div id="countdown" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4" x-data="{ deadline: new Date('{{ $content['deadline'] }}') }" x-init="setInterval(() => {
+                                                                                {{-- <div id="countdown" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4" x-data="{ deadline: new Date('{{ $content['deadline'] }}') }" x-init="setInterval(() => {
                                                                                     let now = new Date().getTime();
                                                                                     let distance = deadline - now;
                                                                                     if (distance < 0) {
-                                                                                        document.getElementById('countdown').innerHTML = 'EXPIRED';
+                                                                                       
                                                                                     } else {
                                                                                         let days = Math.floor(distance / (1000 * 60 * 60 * 24));
                                                                                         let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -263,7 +267,67 @@
                                                                                         document.getElementById('countdown').innerHTML = days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's ';
                                                                                     }
                                                                                 }, 1000)">
+                                                                                </div> --}}
+                                                                               
+                                                                                @if (!$submitted)
+
+                                                                                <template x-if="showModal">
+                                                                                    <div id="countdown{{$content['content_id']}}" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4"   x-show="showModal" x-data="{ timer: 3600, interval: null, expired: false }" x-init="
+                                                                                    interval = setInterval(() => {
+                                                                                        if (timer > 0) {
+                                                                                            timer--;
+                                                                                            let hours = Math.floor(timer / 3600);
+                                                                                            let minutes = Math.floor((timer % 3600) / 60);
+                                                                                            let seconds = Math.floor(timer % 60);
+                                                                                            document.getElementById('countdown{{$content['content_id']}}').innerHTML = hours + 'h ' + minutes + 'm ' + seconds + 's ';
+                                                                                        } else {
+                                                                                            clearInterval(interval);
+                                                                                            expired = true;
+                                                                                            document.getElementById('countdown{{$content['content_id']}}').innerHTML = 'Time\'s up!';
+                
+                                                                                            updateStatusToMissing({{ $content['content_id'] }});
+                                                                                        }
+                                                                                    }, 1000);
+                                                                                ">
                                                                                 </div>
+                                                                                </template>
+
+                                                                                {{-- <div x-data="{ open: false, timer: 3600, interval: null, expired: false }"
+                                                                                    x-show="showModal"
+                                                                                    @keydown.escape.window="open = false"
+                                                                                    @click.away="open = false"
+                                                                                    x-init="
+                                                                                        $watch('open', value => {
+                                                                                            if (value) {
+                                                                                                startCountdown();
+                                                                                            } else {
+                                                                                                clearInterval(interval);
+                                                                                            }
+                                                                                        });
+
+                                                                                        function startCountdown() {
+                                                                                            interval = setInterval(() => {
+                                                                                                if (timer > 0) {
+                                                                                                    timer--;
+                                                                                                    let hours = Math.floor(timer / 3600);
+                                                                                                    let minutes = Math.floor((timer % 3600) / 60);
+                                                                                                    let seconds = Math.floor(timer % 60);
+                                                                                                    $el.querySelector('#countdown').innerHTML = hours + 'h ' + minutes + 'm ' + seconds + 's ';
+                                                                                                } else {
+                                                                                                    clearInterval(interval);
+                                                                                                    expired = true;
+                                                                                                    $el.querySelector('#countdown').innerHTML = 'Time\'s up!';
+                                                                                                    updateStatusToMissing({{ $content['content_id'] }});
+                                                                                                }
+                                                                                            }, 1000);
+                                                                                        }
+                                                                                    "
+                                                                                    class="modal">
+                                                                                    </div> --}}
+                                                                                @else
+                                                                                <p>Try</p>
+                                                                                @endif
+                                                                                
                                                                             @else
                                                                                 <div class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">{{$content['deadline']}}</div>
                                                                             @endif
@@ -297,34 +361,67 @@
                                                                         @endif
             
                                                                     </div>
-                                                                    <div class="flex justify-between items-center">
-                                                                        <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
-                                                                        file:me-4 file:py-2 file:px-4
-                                                                        file:rounded-lg file:border-0
-                                                                        file:text-sm file:font-semibold
-                                                                        file:bg-blue-600 file:text-white
-                                                                        hover:file:bg-blue-700
-                                                                        file:disabled:opacity-50 file:disabled:pointer-events-none
-                                                                        dark:text-neutral-500
-                                                                        dark:file:bg-blue-500
-                                                                        dark:hover:file:bg-blue-400
-                                                                        file:before:content-['Add_or_Create']
-                                                                        "
-                                                                        
-                                                                        multiple
-                                                                        onchange="displaySelectedFiles(this)
-                                                                        "
-                                                                    >
-                                                                        
-                                                                    </div>
+                                                                    <form action="{{ route('student.student.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id,'classwork_id' => $content['content_id']])}}" method="POST" enctype="multipart/form-data">
+                                                                        @csrf
+                                                                        @if(!$submitted)
+                                                                            <div class="flex justify-between items-center">
+                                                                                <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
+                                                                                file:me-4 file:py-2 file:px-4
+                                                                                file:rounded-lg file:border-0
+                                                                                file:text-sm file:font-semibold
+                                                                                file:bg-blue-600 file:text-white
+                                                                                hover:file:bg-blue-700
+                                                                                file:disabled:opacity-50 file:disabled:pointer-events-none
+                                                                                dark:text-neutral-500
+                                                                                dark:file:bg-blue-500
+                                                                                dark:hover:file:bg-blue-400
+                                                                                file:before:content-['Add_or_Create']
+                                                                                "
+                                                                                
+                                                                                multiple
+                                                                                onchange="displaySelectedFiles(this)
+                                                                                "
+                                                                                re
+                                                                            >
+                                                                                
+                                                                            </div>
+                                                                        @else
+                                                                        <div class="flex justify-between items-center">
+                                                                            <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
+                                                                            file:me-4 file:py-2 file:px-4
+                                                                            file:rounded-lg file:border-0
+                                                                            file:text-sm file:font-semibold
+                                                                            file:bg-blue-600 file:text-white
+                                                                            hover:file:bg-blue-700
+                                                                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                                                                            dark:text-neutral-500
+                                                                            dark:file:bg-blue-500
+                                                                            dark:hover:file:bg-blue-400
+                                                                            file:before:content-['Add_or_Create']
+                                                                            "
+                                                                            
+                                                                            multiple
+                                                                            onchange="displaySelectedFiles(this)
+                                                                            "
+                                                                            disabled
+                                                                            required
+                                                                        >    
+                                                                        </div>
+                                                                        @endif
+                                                                    
                                                                     @if (Carbon\Carbon::parse($content['deadline_timestamp'])->isPast())
                                                                         <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p>
                                                                     @endif
                                                                     {{-- <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p> --}}
                                                                 </div>
-                                                                <button type="submit" class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full">Mark as done</button>
+                                                                @if (!$submitted)
+                                                                    <button type="submit" class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full">Submit</button>
+                                                                @else
+                                                                <button type="submit" class="px-4 py-2 mt-5 bg-gray-300 text-black-500 rounded-md w-full" disabled>Submit</button>
+                                                                @endif
+                                                               
                                                                 <p></p>
-                                                            </form>
+                                                                </form>
                                                             @foreach ($student_file as $student_files)
                                                                 @if ($student_files->classwork_id === $content['content_id'] && $student_files->student_id=== Auth::id())
 
@@ -752,6 +849,26 @@ function postContent() {
     // function formatText(command) {
     //     document.execCommand(command, false, null);
     // }
+
+    function updateStatusToMissing(contentId) {
+        // Make an AJAX request to update the status to Missing
+        fetch(`/update-status/${contentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ status: 'Missing' })
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            if (data.success) {
+                document.getElementById('work-status').innerHTML = '<span class="text-red-600">Missing</span>';
+            }
+        }).catch(error => {
+            console.error('Error updating status:', error);
+        });
+    }
 
 
 

@@ -79,7 +79,7 @@
                     <i class="fa-solid fa-users"></i> People
                 </a>
                 <hr class="border-gray-300">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
+                <a href="<?php echo e(route('teacher.classwork.index', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id])); ?>" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
                     <i class="fa-solid fa-list-ol"></i> Scores
                 </a>
                 <hr class="border-gray-300">
@@ -152,7 +152,25 @@
                           >
                         </div>
 
+                        <div class="max-w-sm mt-4">
+                            <label class="block text-gray-700">
+                              Solution (*only if practice problem is selected)
+                            </label>
                         
+                            <input id="solution_files" type="file" name="solution_files[]"class="block w-full text-sm text-gray-500
+                            file:me-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-700
+                            file:disabled:opacity-50 file:disabled:pointer-events-none
+                            dark:text-neutral-500
+                            dark:file:bg-blue-500
+                            dark:hover:file:bg-blue-400
+                            "
+                            multiple
+                          >
+                        </div>
                         
                         
                           <div id="fileList" class="mt-4 text-black">

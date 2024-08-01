@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\AssignCourseContent;
 use App\Models\CourseClassworkFiles;
+use App\Models\StudentClasswork;
 
 class CourseContentClasswork extends Model
 {
@@ -14,7 +15,7 @@ class CourseContentClasswork extends Model
     protected $table = 'course_content_classwork';
 
     protected $fillable = [
-        'classwork_id',
+        'id',
         'classwork',
         'type',
         'deadline',
@@ -26,6 +27,11 @@ class CourseContentClasswork extends Model
     }
 
     public function courseFiles()
+    {
+        return $this->belongsTo(CourseClassworkFiles::class);
+    }
+
+    public function courseStudentClasswork()
     {
         return $this->belongsTo(CourseClassworkFiles::class);
     }

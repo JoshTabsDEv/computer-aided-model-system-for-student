@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
 use App\Models\CourseClassworkFiles;
+use App\Models\StudentClasswork;
 
 class FileController extends Controller
 {
@@ -38,4 +39,6 @@ class FileController extends Controller
         // Return the file as a response
         return response()->file($filePath);
     }
+
+    
 }

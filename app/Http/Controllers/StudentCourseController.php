@@ -328,6 +328,23 @@ public function removeAnnouncement($userID, $type, $assignmentTableID, $courseID
         return response()->file($path);
     } 
 
+    public function showClasswork($id)
+    {
+        // Fetch the file record from the database
+        $file = StudentClasswork::findOrFail($id);
+
+        // Get the path to the file
+        $filePath = storage_path("app/public/classwork_files/student/{$file->class_files}");
+
+        // Check if file exists
+        if (!file_exists($filePath)) {
+            abort(404);
+        }
+
+        // Return the file as a response
+        return response()->file($filePath);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Auth\CourseController;
 use App\Http\Controllers\Admin\Auth\TeacherController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentCourseController;
+use App\Http\Controllers\ManageClassworkController;
 use App\Http\Controllers\Admin\Auth\TeacherCourseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
@@ -100,6 +101,9 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
     ->name('classroom.files.show');
     Route::get('/solutions/{id}', [StudentCourseController::class, 'showSolution'])->name('solutions.show');
 
+    Route::get('/classwork/{userID}/{classworkID}', [StudentCourseController::class, 'showClasswork'])->name('classwork.show');
+
+
     Route::post('/join-class',[StudentController::class, 'joinClass'])
     ->name('joinClass');
 
@@ -121,6 +125,9 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
     ->name('teacher.removeAnnouncement');//remove announcement
     Route::put('/update-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'updateAnnouncement'])
     ->name('teacher.updateAnnouncement'); //update announcement
+
+    Route::get('/manage-classwork/{userID}/{assignmentTableID}/{courseID}', [ManageClassworkController::class, 'index'])
+    ->name('classwork.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

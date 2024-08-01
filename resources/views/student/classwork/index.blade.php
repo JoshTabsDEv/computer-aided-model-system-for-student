@@ -1,4 +1,4 @@
-<x-teacher-app-layout>
+<x-student-app-layout>
     <x-user-route-page-name 
         :routeName="'teacher.classwork.index'"
         :courseDetails="[
@@ -8,14 +8,8 @@
             'section' => $manageCourse->section,
         ]"
     />
-    <x-teacher.section-div-style>
+    <x-student.section-div-style>
+       
+    </x-student.section-div-style>
+</x-student-app-layout>
 
-    </x-teacher.section-div-style>
-</x-teacher-app-layout>
-
-<x-show-hide-sidebar
-    toggleButtonId="toggleButton"
-    sidebarContainerId="sidebarContainer"
-    dashboardContentId="dashboardContent"
-    toggleIconId="toggleIcon"
-/>
