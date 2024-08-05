@@ -11,6 +11,7 @@ use App\Models\AssignCourseAnnouncement;
 use App\Models\CourseContentClasswork;
 use App\Models\CourseClassworkFiles;
 use App\Models\Solution;
+use App\Models\SubClasswork;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use App\Models\Course;
@@ -139,35 +140,144 @@ class ManageCourseController extends Controller
         if ($selectedOption === 'Practice Problem') {
             $rules =  [
                 'content1' => 'required|string',
+                'dynamicInputs.*' => 'nullable|string',
             ];
+
+            // dd($request->all());
+            
             // dd($request->input('content1'));
         } 
         elseif ($selectedOption === 'Assignment') {
             $rules = [
                 'contentAssignment' => 'required|string',
                 'deadlineAssignment' => 'date_format:Y-m-d\TH:i',
-                // 'files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
+                'files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
             ];
+
+           
             // dd($request->input('contentAssignment'));
             // dd($request->input('deadlineAssignment'));
-            
         } 
-        // elseif ($selectedOption === 'Module') {
-        //     $rules = array_merge($rules, [
-        //         'content1' => 'required|string',
-        //         'content2' => 'required|string',
-        //         'solution_files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
-        //     ]);
-        // }
+        elseif ($selectedOption === 'Module') {
+            $rules = array_merge($rules, [
+                'contentModule' => 'required|string',
+                'files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
+                // 'solution_files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
+            ]);
+        }
     
         $request->validate($rules);
         
-      
-        //     $classwork = CourseContentClasswork::create([
-        //         'classwork' => $request->input('content1'),
-        //         'type' => $request->input('content2'),
-        //         'deadline' => $request->input('deadline'),
-        //     ]);
+        if ($selectedOption === 'Practice Problem') {
+            $classwork = CourseContentClasswork::create([
+                'classwork' => $request->input('content1'),
+                'type' => $request->input('content2'),
+            ]);
+
+            
+            $inputs = $request->input('dynamicInputs');
+
+
+
+            // Prepare data for bulk insert
+            $data = [];
+            foreach ($inputs as $input) {
+            
+                if (!empty($input)) {
+                    $data[] = [
+                        'title' => 'test muna',
+                        'content' => $input,
+                        'classwork_id' => $classwork->id
+                    ]; // Adjust field name as needed
+                }
+            }
+        
+            // Bulk insert the data
+            if (!empty($data)) {
+                SubClasswork::insert($data);
+            }
+        } 
+        elseif ($selectedOption === 'Assignment') {
+            $classwork = CourseContentClasswork::create([
+                'classwork' => $request->input('contentAssignment'),
+                'type' => $request->input('content2'),
+                'deadline' => $request->input('deadlineAssignment'),
+            ]);
+
+            $fileData = [];
+            if($files=$request->file('files')){
+                foreach ($files as $file) {
+
+                    $fileNameWithExt = $file->getClientOriginalName();
+                    $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileNameToStore = $filename.'_'.time().'.'.$extension;
+                    
+
+                   
+                    if ($extension == 'pdf') {
+                        // Generate a thumbnail for PDF files
+                        $pdf = new Imagick($file->getPathname() . '[0]'); // Get the first page
+                        $pdf->setImageFormat('jpeg');
+                        $pdf->thumbnailImage(150, 150, true, true);
+                        Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore . '.jpg', $pdf);
+                    }
+
+                    $path = $file->storeAs('public/classwork_files', $fileNameToStore);
+                   
+                    $fileData[] = [
+                        'classwork_file' => $fileNameToStore,
+                        'classwork_id' => $classwork->id,             
+                    ];
+                }
+                
+            }
+
+            CourseClassworkFiles::insert($fileData);
+
+        } 
+        elseif ($selectedOption === 'Module') {
+            $classwork = CourseContentClasswork::create([
+                'classwork' => $request->input('contentModule'),
+                'type' => $request->input('content2'),
+            ]);
+
+            $fileData = [];
+            if($files=$request->file('files')){
+                foreach ($files as $file) {
+
+                    $fileNameWithExt = $file->getClientOriginalName();
+                    $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileNameToStore = $filename.'_'.time().'.'.$extension;
+                    
+
+                   
+                    if ($extension == 'pdf') {
+                        // Generate a thumbnail for PDF files
+                        $pdf = new Imagick($file->getPathname() . '[0]'); // Get the first page
+                        $pdf->setImageFormat('jpeg');
+                        $pdf->thumbnailImage(150, 150, true, true);
+                        Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore . '.jpg', $pdf);
+                    }
+
+                    $path = $file->storeAs('public/classwork_files', $fileNameToStore);
+                   
+                    $fileData[] = [
+                        'classwork_file' => $fileNameToStore,
+                        'classwork_id' => $classwork->id,             
+                    ];
+                }
+                
+            }
+
+            CourseClassworkFiles::insert($fileData);
+        }
+            // $classwork = CourseContentClasswork::create([
+            //     'classwork' => $request->input('content'),
+            //     'type' => $request->input('content2'),
+            //     'deadline' => $request->input('deadline'),
+            // ]);
 
         //     $fileData = [];
         //     if($files=$request->file('files')){
@@ -221,10 +331,10 @@ class ManageCourseController extends Controller
         //     Solution::insert($solutionFileData);
 
 
-        //     AssignCourseContent::create([
-        //         'course_assignments_id' => $assignmentTableID,
-        //         'classwork_id' => $classwork->id,
-        //     ]);
+            AssignCourseContent::create([
+                'course_assignments_id' => $assignmentTableID,
+                'classwork_id' => $classwork->id,
+            ]);
         // }
     
         return redirect()->route('teacher.teacher.index', [

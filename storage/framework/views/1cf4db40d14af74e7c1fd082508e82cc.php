@@ -179,7 +179,6 @@
                                 <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('underline')" title="Underline"><u>U</u></button>
                             </div>
                             
-                            <input type="hidden" name="content2" id="content2">
                             <div class="mt-4">
                                 <label for="deadlineModule" class="block text-gray-700">Set Deadline:</label>
                                 <input type="datetime-local" id="deadline" name="deadline" class="block w-full border border-gray-300 rounded py-2 px-3 mt-1 focus:outline-none focus:border-blue-500 text-black" >
@@ -203,6 +202,7 @@
                             <button type="button" class="add-button bg-green-500 text-white px-4 py-2 rounded mt-4" onclick="addInputField()">  <i class="fas fa-plus"></i> Add Input Field</button>
                         </div> 
 
+                        <input type="hidden" name="content2" id="content2">
                         <input type="hidden" name="content1" id="content1">
                         <input type="hidden" name="contentAssignment" id="contentAssignment">
                         <input type="hidden" name="contentModule" id="contentModule">
@@ -914,7 +914,7 @@ function postContent() {
         classworkFileInput.name = 'files[]';
         classworkFileInput.classList.add('block', 'w-full', 'text-sm', 'text-gray-500', 'file:me-4', 'file:py-2', 'file:px-4', 'file:rounded-lg', 'file:border-0', 'file:text-sm', 'file:font-semibold', 'file:bg-blue-600', 'file:text-white', 'hover:file:bg-blue-700', 'file:disabled:opacity-50', 'file:disabled:pointer-events-none', 'dark:text-neutral-500', 'dark:file:bg-blue-500', 'dark:hover:file:bg-blue-400');
         classworkFileInput.multiple = true;
-        classworkFileInput.required = true;
+        // classworkFileInput.required = true;
         classworkFileInput.onchange = function() {
             displaySelectedFiles(this);
         };
