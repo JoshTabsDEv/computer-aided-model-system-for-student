@@ -140,7 +140,7 @@
                                                                
                                                                     <div class="mt-4 p-4 bg-green-100 rounded-lg">  
                                                                             <li class="mb-2 flex items-center  rounded p-2">
-                                                                                <a href="<?php echo e(route('teacher.classwork.show',  ['userID' => auth()->user()->id, 'classworkID' =>$studentClassworks->classwork_id ])); ?>" class="text-blue-500 hover:underline"><?php echo e($studentClassworks->class_files); ?></a>
+                                                                                <a href="<?php echo e(route('teacher.classwork.show', $studentClassworks->id )); ?>" class="text-blue-500 hover:underline"><?php echo e($studentClassworks->class_files); ?></a>
                                                                                 <div class="text-gray-500 text-sm ml-2"><?php echo e(strtoupper(pathinfo($studentClassworks->class_files, PATHINFO_EXTENSION))); ?></div>
                                                 
                                                                             </li>

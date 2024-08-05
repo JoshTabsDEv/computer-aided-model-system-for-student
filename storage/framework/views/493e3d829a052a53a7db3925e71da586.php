@@ -1,6 +1,6 @@
 <div id="capsLockWarning" class="text-red-500"></div>
 
-<?php if (! $__env->hasRenderedOnce('7147a797-daa5-4259-b2f9-46ce450a0914')): $__env->markAsRenderedOnce('7147a797-daa5-4259-b2f9-46ce450a0914'); ?>
+<?php if (! $__env->hasRenderedOnce('8763888a-9c14-4d6c-8a0c-c51cabf03198')): $__env->markAsRenderedOnce('8763888a-9c14-4d6c-8a0c-c51cabf03198'); ?>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 const inputFields = document.querySelectorAll("input[type='text']");

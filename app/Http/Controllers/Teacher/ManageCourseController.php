@@ -129,100 +129,110 @@ class ManageCourseController extends Controller
     public function postClasswork(Request $request, $userID, $assignmentTableID, $courseID,)
     {
        
-
-        $request->validate([
-            'content1' => 'required|string', 
-            'content2' => 'required|string',
-            'deadline' => 'required|date_format:Y-m-d\TH:i',
-            'files.*' => 'required|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
-            'solution_files.*' => 'required|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx'
-        ]);
+        $selectedOption = $request->input('content2');
         
-       
-        // // Check if there's an existing record with the assignment ID
-        // $content = CourseContentClasswork::where('id', $assignmentTableID)
-        //     ->whereNull('classwork')
-        //     ->first();
 
+        $rules = [
+            'content2' => 'required|string',
+        ];
     
-        // if ($content) {
-        //     // Update existing record with the new classwork
-        //     $content->update([
+        if ($selectedOption === 'Practice Problem') {
+            $rules =  [
+                'content1' => 'required|string',
+            ];
+            // dd($request->input('content1'));
+        } 
+        elseif ($selectedOption === 'Assignment') {
+            $rules = [
+                'contentAssignment' => 'required|string',
+                'deadlineAssignment' => 'date_format:Y-m-d\TH:i',
+                // 'files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
+            ];
+            // dd($request->input('contentAssignment'));
+            // dd($request->input('deadlineAssignment'));
+            
+        } 
+        // elseif ($selectedOption === 'Module') {
+        //     $rules = array_merge($rules, [
+        //         'content1' => 'required|string',
+        //         'content2' => 'required|string',
+        //         'solution_files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
+        //     ]);
+        // }
+    
+        $request->validate($rules);
+        
+      
+        //     $classwork = CourseContentClasswork::create([
         //         'classwork' => $request->input('content1'),
         //         'type' => $request->input('content2'),
+        //         'deadline' => $request->input('deadline'),
         //     ]);
-        // } else {
-            // Create a new record
-            $classwork = CourseContentClasswork::create([
-                'classwork' => $request->input('content1'),
-                'type' => $request->input('content2'),
-                'deadline' => $request->input('deadline'),
-            ]);
 
-            $fileData = [];
-            if($files=$request->file('files')){
-                foreach ($files as $file) {
+        //     $fileData = [];
+        //     if($files=$request->file('files')){
+        //         foreach ($files as $file) {
 
-                    $fileNameWithExt = $file->getClientOriginalName();
-                    $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                    $extension = $file->getClientOriginalExtension();
-                    $fileNameToStore = $filename.'_'.time().'.'.$extension;
+        //             $fileNameWithExt = $file->getClientOriginalName();
+        //             $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+        //             $extension = $file->getClientOriginalExtension();
+        //             $fileNameToStore = $filename.'_'.time().'.'.$extension;
                     
 
                    
-                    if ($extension == 'pdf') {
-                        // Generate a thumbnail for PDF files
-                        $pdf = new Imagick($file->getPathname() . '[0]'); // Get the first page
-                        $pdf->setImageFormat('jpeg');
-                        $pdf->thumbnailImage(150, 150, true, true);
-                        Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore . '.jpg', $pdf);
-                    }
+        //             if ($extension == 'pdf') {
+        //                 // Generate a thumbnail for PDF files
+        //                 $pdf = new Imagick($file->getPathname() . '[0]'); // Get the first page
+        //                 $pdf->setImageFormat('jpeg');
+        //                 $pdf->thumbnailImage(150, 150, true, true);
+        //                 Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore . '.jpg', $pdf);
+        //             }
 
-                    $path = $file->storeAs('public/classwork_files', $fileNameToStore);
+        //             $path = $file->storeAs('public/classwork_files', $fileNameToStore);
                    
-                    $fileData[] = [
-                        'classwork_file' => $fileNameToStore,
-                        'classwork_id' => $classwork->id,             
-                    ];
-                }
+        //             $fileData[] = [
+        //                 'classwork_file' => $fileNameToStore,
+        //                 'classwork_id' => $classwork->id,             
+        //             ];
+        //         }
                 
-            }
+        //     }
 
-            $solutionFileData = [];
-            if($files=$request->file('solution_files')){
-                foreach ($files as $file) {
+        //     $solutionFileData = [];
+        //     if($files=$request->file('solution_files')){
+        //         foreach ($files as $file) {
 
-                    $fileNameWithExt = $file->getClientOriginalName();
-                    $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                    $extension = $file->getClientOriginalExtension();
-                    $fileNameToStore = $filename.'_'.time().'.'.$extension;
-                    $path = $file->storeAs('public/classwork_files/solution', $fileNameToStore);
+        //             $fileNameWithExt = $file->getClientOriginalName();
+        //             $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+        //             $extension = $file->getClientOriginalExtension();
+        //             $fileNameToStore = $filename.'_'.time().'.'.$extension;
+        //             $path = $file->storeAs('public/classwork_files/solution', $fileNameToStore);
                    
-                    $solutionFileData[] = [
-                        'solution_file' => $fileNameToStore,
-                        'course_assignment_id' => $assignmentTableID,
-                        'classwork_id' => $classwork->id      
-                    ];
-                }
+        //             $solutionFileData[] = [
+        //                 'solution_file' => $fileNameToStore,
+        //                 'course_assignment_id' => $assignmentTableID,
+        //                 'classwork_id' => $classwork->id      
+        //             ];
+        //         }
                 
-            }
+        //     }
             
-            CourseClassworkFiles::insert($fileData);
-            Solution::insert($solutionFileData);
+        //     CourseClassworkFiles::insert($fileData);
+        //     Solution::insert($solutionFileData);
 
 
-            AssignCourseContent::create([
-                'course_assignments_id' => $assignmentTableID,
-                'classwork_id' => $classwork->id,
-            ]);
+        //     AssignCourseContent::create([
+        //         'course_assignments_id' => $assignmentTableID,
+        //         'classwork_id' => $classwork->id,
+        //     ]);
         // }
     
         return redirect()->route('teacher.teacher.index', [
             'userID' => $userID,
             'assignmentTableID' => $assignmentTableID,
             'courseID' => $courseID,
-        ])->with('success', 'Classwork added successfully.')
-          ->with('courseFiles', CourseClassworkFiles::where('classwork_id', $classwork->id)->get());
+        ])->with('success', $selectedOption);
+        //   ->with('courseFiles', CourseClassworkFiles::where('classwork_id', $classwork->id)->get());
     }
 
 //    public function removeAnnouncement($userID, $assignmentTableID, $courseID, $contentID, $announcementID)
@@ -265,7 +275,7 @@ public function removeAnnouncement($userID, $type, $assignmentTableID, $courseID
             'userID' => $userID,
             'assignmentTableID' => $assignmentTableID,
             'courseID' => $courseID,
-        ])->with('success', 'Classwor removed successfully.');
+        ])->with('success', 'Classwork removed successfully.');
     }
 }
 

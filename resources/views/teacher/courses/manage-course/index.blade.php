@@ -51,103 +51,173 @@
                     <i class="fa-solid fa-file-pen"></i> Student
                 </a>
             </div>
+           
+            
             
             <!-- Classwork Modal -->
             <div id="classworkModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
                 <div class="fixed inset-0 bg-gray-800 bg-opacity-75"></div>
-                <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full z-50">
+                <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-full overflow-y-auto z-50">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-semibold text-black">Add Classwork</h2>
                         <button id="closeClassworkModal" class="text-lg text-black">X</button>
                     </div>
+                    {{-- @php
+                        // Assuming these values are available in your Blade template
+                        $userID = auth()->user()->id;
+                        $assignmentTableID = $manageCourse->id;
+                        $courseID = $manageCourse->course_id;
+                    @endphp
 
+                    <!-- Include the Livewire component with parameters -->
+                    @livewire('classwork-form', [
+                        'userID' => $userID,
+                        'assignmentTableID' => $assignmentTableID,
+                        'courseID' => $courseID
+                    ]) --}}
+                
                     <!-- Modal body -->
-                    
-                    <form id="classworkForm" action="{{ route('teacher.teacher.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id])}}" method="POST" onsubmit="logClasswork(event)" enctype="multipart/form-data">
+                     <form id="classworkForm" action="{{ route('teacher.teacher.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id])}}" method="POST" onsubmit="logClasswork(event)"  enctype="multipart/form-data" class="p-6 max-w-lg mx-auto">
                         @csrf
-                        <div class="text-gray-500">
+                          <div class="relative mt-4">
+                             <div id="defaultUI" class="flex justify-center items-center">
+                                <h2 class="text-black">Select an Option</h2>
+                            </div> 
+                            <select id="editor2" class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500 hover:bg-gray-100" required>
+                                <option value="">Select an Option</option>
+                                <option data-id="Practice Problem" value="Practice Problem">Practice Problems</option>
+                                <option data-id="Assignment" value="Assignment">Assignments</option>
+                                <option data-id="Module" value="Module">Module</option>
+                            </select>
+                            <input type="hidden" name="selectedOption" id="selectedOption">
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9 11l3 3 3-3h-6z"/></svg>
+                            </div>
+                          </div>  
+                       
+                         {{-- <div class="text-gray-700 mb-4">
                             Classwork Content
                         </div>
-                        <div id="editor1" contenteditable="true" class="border p-2 mt-2 rounded h-40 bg-white overflow-y-auto text-black"
-                            placeholder="Enter your Classwork Content here..." ></div>
+                        <div id="editor1" contenteditable="true" class="border p-2 mt-2 rounded h-40 bg-white overflow-y-auto text-black" placeholder="Enter your Classwork Content here..."></div>
                         <input type="hidden" name="content1" id="content1">
-                        <div class="editor-toolbar">
-                            <button class="text-black" type="button" onclick="formatText('bold')" title="Bold"><strong>B</strong></button>
-                            <button class="text-black" type="button" onclick="formatText('italic')" title="Italic"><em>I</em></button>
-                            <button class="text-black" type="button" onclick="formatText('underline')" title="Underline"><u>U</u></button>
+                        <div class="flex space-x-2 mt-2">
+                            <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('bold')" title="Bold"><strong>B</strong></button>
+                            <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('italic')" title="Italic"><em>I</em></button>
+                            <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('underline')" title="Underline"><u>U</u></button>
                         </div>
-                        {{-- Select --}}
-                        <div class="relative" >
-                            <select id="editor2" class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2.5 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500 hover:bg-gray-100 " required>
-                              <option data-id="Practice Problem" >Practice Problems</option>
-                              <option data-id="Assignment">Assignments</option>
-                              <option data-id="Module">Module</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9 11l3 3 3-3h-6z"/></svg>
-                            </div>
-                        </div>
+                        
                         <input type="hidden" name="content2" id="content2">
                         <div class="mt-4">
                             <label for="deadline" class="block text-gray-700">Set Deadline:</label>
                             <input type="datetime-local" id="deadline" name="deadline" class="block w-full border border-gray-300 rounded py-2 px-3 mt-1 focus:outline-none focus:border-blue-500 text-black" required>
                         </div>
-                        {{-- Upload File --}}
-                        <div class="max-w-sm mt-4">
+                        <div class="mt-4">
                             <label class="block text-gray-700">
-                              Classwork File
+                                Classwork File
                             </label>
-                        
-                            <input id="files" type="file" name="files[]"class="block w-full text-sm text-gray-500
-                            file:me-4 file:py-2 file:px-4
-                            file:rounded-lg file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-blue-600 file:text-white
-                            hover:file:bg-blue-700
-                            file:disabled:opacity-50 file:disabled:pointer-events-none
-                            dark:text-neutral-500
-                            dark:file:bg-blue-500
-                            dark:hover:file:bg-blue-400
-                            "
-                            multiple
-                            required
-                            onchange="displaySelectedFiles(this)
-                            "
-                          >
+                            <input id="files" type="file" name="files[]" class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:disabled:opacity-50 file:disabled:pointer-events-none dark:text-neutral-500 dark:file:bg-blue-500 dark:hover:file:bg-blue-400" multiple required onchange="displaySelectedFiles(this)">
                         </div>
+                        <div class="mt-4">
+                            <label class="block text-gray-700">
+                                Solution (*only if practice problem is selected)
+                            </label>
+                            <input id="solution_files" type="file" name="solution_files[]" class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:disabled:opacity-50 file:disabled:pointer-events-none dark:text-neutral-500 dark:file:bg-blue-500 dark:hover:file:bg-blue-400" multiple>
+                        </div>
+                        
+                        <div id="dynamicInputContainer" class="mt-4">
+                            <!-- Dynamic input fields will be added here -->
+                        </div>
+                        <button type="button" class="add-button bg-green-500 text-white px-4 py-2 rounded mt-4" onclick="addInputField()">  <i class="fas fa-plus"></i> Add Input Field</button> --}}
+                        
+                        
+                      
+                        
+                        <!--Default View-->
+                       
+                        <!-- Hidden UI sections -->
+                       
+                         <div id="practiceProblemUI" class="hidden">                        
+                            
+                            <div class="text-gray-700 mb-4">
+                                Practice Problem Overview
+                            </div>
+                            <div id="editor1" contenteditable="true" class="border p-2 mt-2 rounded h-40 bg-white overflow-y-auto text-black" placeholder="Enter your Classwork Content here..."></div>
+                          
+                            <div class="flex space-x-2 mt-2">
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('bold')" title="Bold"><strong>B</strong></button>
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('italic')" title="Italic"><em>I</em></button>
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('underline')" title="Underline"><u>U</u></button>
+                            </div>
+                            <div id="dynamicInputContainer" class="mt-4">
+                                <!-- Dynamic input fields will be added here -->
+                            </div>
+                            <button type="button" class="add-button bg-green-500 text-white px-4 py-2 rounded mt-4 w-full" onclick="addInputField()">  <i class="fas fa-plus"></i> Add item</button> 
+                        </div>
+                        <div id="assignmentUI" class="hidden">
+                            <div class="text-gray-700 mb-4">
+                            Assignment Content
+                            </div>
+                            <div id="editorAssignment" contenteditable="true" class="border p-2 mt-2 rounded h-40 bg-white overflow-y-auto text-black" placeholder="Enter your Classwork Content here..."></div>
+                            
+                            <div class="flex space-x-2 mt-2">
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('bold')" title="Bold"><strong>B</strong></button>
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('italic')" title="Italic"><em>I</em></button>
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('underline')" title="Underline"><u>U</u></button>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <label for="deadline" class="block text-gray-700">Set Deadline:</label>
+                                <input type="datetime-local" id="deadline" name="deadlineAssignment" class="block w-full border border-gray-300 rounded py-2 px-3 mt-1 focus:outline-none focus:border-blue-500 text-black" >
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-gray-700">
+                                    Assignment File
+                                </label>
+                                <input id="files" type="file" name="files[]" class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:disabled:opacity-50 file:disabled:pointer-events-none dark:text-neutral-500 dark:file:bg-blue-500 dark:hover:file:bg-blue-400" multiple onchange="displaySelectedFiles(this)">
+                            </div>
+                         </div>
+                        <div id="moduleUI" class="hidden">
+                            <div class="text-gray-700 mb-4">
+                                Classwork Content
+                            </div>
+                            <div id="editorModule" contenteditable="true" class="border p-2 mt-2 rounded h-40 bg-white overflow-y-auto text-black" placeholder="Enter your Classwork Content here..."></div>
+                            <div class="flex space-x-2 mt-2">
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('bold')" title="Bold"><strong>B</strong></button>
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('italic')" title="Italic"><em>I</em></button>
+                                <button class="text-black border border-gray-300 rounded px-2 py-1" type="button" onclick="formatText('underline')" title="Underline"><u>U</u></button>
+                            </div>
+                            
+                            <input type="hidden" name="content2" id="content2">
+                            <div class="mt-4">
+                                <label for="deadlineModule" class="block text-gray-700">Set Deadline:</label>
+                                <input type="datetime-local" id="deadline" name="deadline" class="block w-full border border-gray-300 rounded py-2 px-3 mt-1 focus:outline-none focus:border-blue-500 text-black" >
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-gray-700">
+                                    Classwork File
+                                </label>
+                                <input id="files" type="file" name="files[]" class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:disabled:opacity-50 file:disabled:pointer-events-none dark:text-neutral-500 dark:file:bg-blue-500 dark:hover:file:bg-blue-400" multiple  onchange="displaySelectedFiles(this)">
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-gray-700">
+                                    Solution (*only if practice problem is selected)
+                                </label>
+                                <input id="solution_files" type="file" name="solution_files[]" class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:disabled:opacity-50 file:disabled:pointer-events-none dark:text-neutral-500 dark:file:bg-blue-500 dark:hover:file:bg-blue-400" multiple>
+                            </div>
+                            
+                            <div id="dynamicInputContainer" class="mt-4">
+                                <!-- Dynamic input fields will be added here -->
+                            </div>
+                            <button type="button" class="add-button bg-green-500 text-white px-4 py-2 rounded mt-4" onclick="addInputField()">  <i class="fas fa-plus"></i> Add Input Field</button>
+                        </div> 
 
-                        <div class="max-w-sm mt-4">
-                            <label class="block text-gray-700">
-                              Solution (*only if practice problem is selected)
-                            </label>
-                        
-                            <input id="solution_files" type="file" name="solution_files[]"class="block w-full text-sm text-gray-500
-                            file:me-4 file:py-2 file:px-4
-                            file:rounded-lg file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-blue-600 file:text-white
-                            hover:file:bg-blue-700
-                            file:disabled:opacity-50 file:disabled:pointer-events-none
-                            dark:text-neutral-500
-                            dark:file:bg-blue-500
-                            dark:hover:file:bg-blue-400
-                            "
-                            multiple
-                          >
+                        <input type="hidden" name="content1" id="content1">
+                        <input type="hidden" name="contentAssignment" id="contentAssignment">
+                        <input type="hidden" name="contentModule" id="contentModule">
+                        <div class="flex justify-end mt-4 w-full">
+                            <button type="submit" id="addButton" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Submit</button>
                         </div>
-                        
-                        
-                          <div id="fileList" class="mt-4 text-black">
-                             {{-- File names will be displayed here --}}
-                          </div>
-                          
-                                 
-                          
-                        <div class="flex justify-end mt-2">
-                            <button type="submit" id="addButton"  class="bg-blue-500 text-white px-4 py-2 rounded ">Add</button>
-                        </div>
-                    </form>
-                   
+                    </form> 
                 </div>
             </div>
 
@@ -461,13 +531,33 @@ function updateInput() {
     }
 
     function logClasswork(event) {
+        
         event.preventDefault();
-        // Get the content from the editor
-        const editorContent = document.getElementById('editor1').innerHTML;
+
         const element = document.getElementById('editor2');
+        const selectedOption = element.options[ element.selectedIndex ].getAttribute('data-id');
+
+        document.getElementById('selectedOption').value = selectedOption;
+
+        if(selectedOption === 'Practice Problem'){
+            const editorContent = document.getElementById('editor1').innerHTML;
+            document.getElementById('content1').value = editorContent;
+            document.getElementById('content2').value = selectedOption;
+        }else if(selectedOption === 'Assignment'){
+            const editorContent = document.getElementById('editorAssignment').innerHTML;
+            document.getElementById('contentAssignment').value = editorContent;
+            document.getElementById('content2').value = selectedOption;
+        }else if(selectedOption === 'Module'){
+            const editorContent = document.getElementById('editorModule').innerHTML;
+            document.getElementById('contentModule').value = editorContent;
+            document.getElementById('content2').value = selectedOption;
+        }
+        
+       
+        
         // Set the value of the hidden input field
-        document.getElementById('content1').value = editorContent;
-        document.getElementById('content2').value = element.options[ element.selectedIndex ].getAttribute('data-id');
+        
+       
         // Submit the form
         document.getElementById('classworkForm').submit();
     }
@@ -702,3 +792,135 @@ function postContent() {
 
 
 </script>
+
+<script>
+    const addButton = document.getElementById('addNextButton');
+    const inputFieldsContainer = document.getElementById('input-fields-container');
+
+    addButton.addEventListener('click', () => {
+        const newInputField = document.createElement('div');
+        newInputField.className = 'input-field';
+        newInputField.innerHTML = `
+            <!-- your input field HTML here, e.g. -->
+            <div class="max-w-sm mt-4">
+                <label class="block text-gray-700">
+                    Classwork File
+                </label>
+                <input type="file" name="files[]" multiple required>
+            </div>
+        `;
+        inputFieldsContainer.appendChild(newInputField);
+    });
+
+    function addInputField() {
+        const container = document.getElementById('dynamicInputContainer');
+        const div = document.createElement('div');
+        div.classList.add('mb-4', 'p-4', 'border', 'border-gray-200', 'rounded');
+
+        // Create the text input field
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'dynamicInputs[]';
+        input.placeholder = 'Enter additional information';
+        input.classList.add('block', 'w-full', 'border', 'border-gray-300', 'rounded', 'py-2', 'px-3', 'focus:outline-none', 'focus:border-blue-500', 'text-black', 'mb-2');
+
+        // Create the remove button
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.classList.add('bg-red-500', 'text-white', 'px-2', 'py-1', 'rounded', 'ml-2');
+        removeButton.innerHTML = '<i class="fas fa-trash"></i>';
+        removeButton.onclick = function() {
+            container.removeChild(div);
+        };
+
+        // Create the container for file inputs
+        const fileInputsContainer = document.createElement('div');
+        fileInputsContainer.classList.add('w-full', 'mt-4');
+
+        // Classwork File
+        const classworkFileDiv = document.createElement('div');
+        classworkFileDiv.classList.add('mt-4');
+        const classworkFileLabel = document.createElement('label');
+        classworkFileLabel.classList.add('block', 'text-gray-700', 'mb-1');
+        classworkFileLabel.innerText = 'Classwork File';
+        const classworkFileInput = document.createElement('input');
+        classworkFileInput.id = 'files';
+        classworkFileInput.type = 'file';
+        classworkFileInput.name = 'files[]';
+        classworkFileInput.classList.add('block', 'w-full', 'text-sm', 'text-gray-500', 'file:me-4', 'file:py-2', 'file:px-4', 'file:rounded-lg', 'file:border-0', 'file:text-sm', 'file:font-semibold', 'file:bg-blue-600', 'file:text-white', 'hover:file:bg-blue-700', 'file:disabled:opacity-50', 'file:disabled:pointer-events-none', 'dark:text-neutral-500', 'dark:file:bg-blue-500', 'dark:hover:file:bg-blue-400');
+        classworkFileInput.multiple = true;
+        classworkFileInput.required = true;
+        classworkFileInput.onchange = function() {
+            displaySelectedFiles(this);
+        };
+
+        classworkFileDiv.appendChild(classworkFileLabel);
+        classworkFileDiv.appendChild(classworkFileInput);
+
+        // Solution File
+        const solutionFileDiv = document.createElement('div');
+        solutionFileDiv.classList.add('mt-4');
+        const solutionFileLabel = document.createElement('label');
+        solutionFileLabel.classList.add('block', 'text-gray-700', 'mb-1');
+        solutionFileLabel.innerText = 'Solution';
+        const solutionFileInput = document.createElement('input');
+        solutionFileInput.id = 'solution_files';
+        solutionFileInput.type = 'file';
+        solutionFileInput.name = 'solution_files[]';
+        solutionFileInput.classList.add('block', 'w-full', 'text-sm', 'text-gray-500', 'file:me-4', 'file:py-2', 'file:px-4', 'file:rounded-lg', 'file:border-0', 'file:text-sm', 'file:font-semibold', 'file:bg-blue-600', 'file:text-white', 'hover:file:bg-blue-700', 'file:disabled:opacity-50', 'file:disabled:pointer-events-none', 'dark:text-neutral-500', 'dark:file:bg-blue-500', 'dark:hover:file:bg-blue-400');
+        solutionFileInput.multiple = true;
+
+        solutionFileDiv.appendChild(solutionFileLabel);
+        solutionFileDiv.appendChild(solutionFileInput);
+
+        // Append file inputs to the fileInputsContainer
+        fileInputsContainer.appendChild(classworkFileDiv);
+        fileInputsContainer.appendChild(solutionFileDiv);
+
+        // Append fileInputsContainer to the main div
+        div.appendChild(input);
+        div.appendChild(removeButton);
+        div.appendChild(fileInputsContainer);
+
+        // Append the main div to the container
+        container.appendChild(div);
+    }
+   
+</script>
+<script>
+
+    document.getElementById('editor2').addEventListener('change', function () {
+        // Hide all UI sections
+    document.getElementById('practiceProblemUI').classList.add('hidden');
+    document.getElementById('assignmentUI').classList.add('hidden'); 
+    document.getElementById('moduleUI').classList.add('hidden');
+    
+    
+            // Show the selected UI section
+    const selectedValue = this.value;
+    if (selectedValue === 'Practice Problem') {
+        document.getElementById('practiceProblemUI').classList.remove('hidden');
+        document.getElementById('deadline').required = false;
+        
+    } else if (selectedValue === 'Assignment') {
+        document.getElementById('assignmentUI').classList.remove('hidden');
+        document.getElementById('deadline').required = true;
+    
+    } else if (selectedValue === 'Module') {
+        document.getElementById('moduleUI').classList.remove('hidden');
+    ;
+    }  
+    });    
+
+ 
+</script>
+
+<style>
+    /* ... */
+    #classworkModal .modal-body {
+        max-height: 80%;
+        overflow-y: auto;
+    }
+    
+    /* ... */
+</style>
