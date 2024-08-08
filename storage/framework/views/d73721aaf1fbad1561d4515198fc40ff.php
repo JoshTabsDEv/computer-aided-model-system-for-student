@@ -1,5 +1,16 @@
-<x-student-app-layout>
-    <x-user-route-page-name :routeName="'student.student.index'" :courseDetails="[
+<?php if (isset($component)) { $__componentOriginalcc67118e210132cf50b1c183d70505e3 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalcc67118e210132cf50b1c183d70505e3 = $attributes; } ?>
+<?php $component = App\View\Components\StudentAppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('student-app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\StudentAppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+    <?php if (isset($component)) { $__componentOriginal8a863ae962bbf3c4907cbf5446e54179 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal8a863ae962bbf3c4907cbf5446e54179 = $attributes; } ?>
+<?php $component = App\View\Components\UserRoutePageName::resolve(['routeName' => 'student.student.index','courseDetails' => [
         'course_name' => $manageCourse->course->course_name,
         'time' =>
             date('g:i A', strtotime($manageCourse->class_start_time)) .
@@ -7,31 +18,59 @@
             date('g:i A', strtotime($manageCourse->class_end_time)),
         'days_of_the_week' => $manageCourse->days_of_the_week,
         'section' => $manageCourse->section,
-    ]" />
-    <x-student.section-div-style>
+    ]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('user-route-page-name'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\UserRoutePageName::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal8a863ae962bbf3c4907cbf5446e54179)): ?>
+<?php $attributes = $__attributesOriginal8a863ae962bbf3c4907cbf5446e54179; ?>
+<?php unset($__attributesOriginal8a863ae962bbf3c4907cbf5446e54179); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal8a863ae962bbf3c4907cbf5446e54179)): ?>
+<?php $component = $__componentOriginal8a863ae962bbf3c4907cbf5446e54179; ?>
+<?php unset($__componentOriginal8a863ae962bbf3c4907cbf5446e54179); ?>
+<?php endif; ?>
+    <?php if (isset($component)) { $__componentOriginala5bba5a6e530dd54f8ed958a04b808fc = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala5bba5a6e530dd54f8ed958a04b808fc = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.student.section-div-style','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('student.section-div-style'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
         <div class="container ml-1.5 sm:mx-auto p-4 relative">
             <!-- heading -->
             <div class="rounded-md p-3 sm:p-4 md:p-6 lg:p-2 w-full h-18 sm:h-20 md:h-28 lg:h-24 lg:pt-4  mb-4 truncate"
                 style="background: linear-gradient(to right, #3b82f6, #1e40af);">
                 <div class="flex justify-between">
                     <span class="text-lg truncate sm:text-sm md:text-2xl lg:text-3xl lg:ml-3 font-bold">
-                        {{ $manageCourse->course->course_code }} - {{ $manageCourse->course->course_name }}
+                        <?php echo e($manageCourse->course->course_code); ?> - <?php echo e($manageCourse->course->course_name); ?>
+
                     </span>
                     <span class="mr-5 text-lg sm:text-sm md:text-2xl lg:text-xl lg:ml-3 font-bold relative">
                         <i id="settingsIcon" class="fa-solid fa-cog cursor-pointer"></i>
                     </span>
                 </div>
                 <span class="text-sm sm:text-md md:text-lg lg:text-xl lg:ml-3">
-                    {{ $manageCourse->section }} | {{ date('g:i A', strtotime($manageCourse->class_start_time)) }} -
-                    {{ date('g:i A', strtotime($manageCourse->class_end_time)) }} {{ $manageCourse->days_of_the_week }}
+                    <?php echo e($manageCourse->section); ?> | <?php echo e(date('g:i A', strtotime($manageCourse->class_start_time))); ?> -
+                    <?php echo e(date('g:i A', strtotime($manageCourse->class_end_time))); ?> <?php echo e($manageCourse->days_of_the_week); ?>
+
                 </span>
             </div>
             <div id="floatingMenu1"
                 class="fixed right-10 top-[160px] transform -translate-y-1/2 bg-white shadow-lg rounded-md p-5 sm:p-6 md:p-7 lg:p-3 border-2  text-black font-medium opacity-0 pointer-events-none transition-all duration-500">
                 <form
-                    action="{{ route('student.unenroll', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id]) }}"
+                    action="<?php echo e(route('student.unenroll', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id])); ?>"
                     method="post">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <button class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200  cursor-pointer">
                         <i class="fa-solid fa-file"></i> Unenroll
                     </button>
@@ -74,7 +113,8 @@
                             <div class="bg-white shadow-sm rounded-lg overflow-hidden">
                                 <div class="p-4 flex items-center">
                                     <img src="teacher.jpg" alt="Teacher" class="w-12 h-12 rounded-full mr-4">
-                                    <p class="text-base font-medium text-gray-800">{{ $manageCourse->teacher->name }}
+                                    <p class="text-base font-medium text-gray-800"><?php echo e($manageCourse->teacher->name); ?>
+
                                     </p>
                                 </div>
                             </div>
@@ -82,15 +122,15 @@
 
                         <!-- Student section -->
                         <h3 class="text-lg font-semibold text-gray-800 mb-2">Students</h3>
-                        @foreach ($enrolledStudent->sortBy('courseStudent.name') as $enrolledStudents)
+                        <?php $__currentLoopData = $enrolledStudent->sortBy('courseStudent.name'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $enrolledStudents): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="bg-white shadow-sm rounded-lg overflow-hidden">
                                 <div class="p-4 flex items-center">
                                     <img src="student.jpg" alt="Student" class="w-12 h-12 rounded-full mr-4">
                                     <p class="text-base font-medium text-gray-800">
-                                        {{ $enrolledStudents->courseStudent->name }}</p>
+                                        <?php echo e($enrolledStudents->courseStudent->name); ?></p>
                                 </div>
                             </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         <div>
 
 
@@ -129,17 +169,74 @@
                         <hr class="w-full border border-gray-500">
                     </div>
                 </div>
-                @if (session('success'))
-                    <x-sweetalert type="success" :message="session('success')" />
-                @endif
+                <?php if(session('success')): ?>
+                    <?php if (isset($component)) { $__componentOriginal54e362747f6a5fcdcf7fd32363698818 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal54e362747f6a5fcdcf7fd32363698818 = $attributes; } ?>
+<?php $component = App\View\Components\Sweetalert::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sweetalert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Sweetalert::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'success','message' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(session('success'))]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal54e362747f6a5fcdcf7fd32363698818)): ?>
+<?php $attributes = $__attributesOriginal54e362747f6a5fcdcf7fd32363698818; ?>
+<?php unset($__attributesOriginal54e362747f6a5fcdcf7fd32363698818); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal54e362747f6a5fcdcf7fd32363698818)): ?>
+<?php $component = $__componentOriginal54e362747f6a5fcdcf7fd32363698818; ?>
+<?php unset($__componentOriginal54e362747f6a5fcdcf7fd32363698818); ?>
+<?php endif; ?>
+                <?php endif; ?>
 
-                @if (session('info'))
-                    <x-sweetalert type="info" :message="session('info')" />
-                @endif
+                <?php if(session('info')): ?>
+                    <?php if (isset($component)) { $__componentOriginal54e362747f6a5fcdcf7fd32363698818 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal54e362747f6a5fcdcf7fd32363698818 = $attributes; } ?>
+<?php $component = App\View\Components\Sweetalert::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sweetalert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Sweetalert::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'info','message' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(session('info'))]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal54e362747f6a5fcdcf7fd32363698818)): ?>
+<?php $attributes = $__attributesOriginal54e362747f6a5fcdcf7fd32363698818; ?>
+<?php unset($__attributesOriginal54e362747f6a5fcdcf7fd32363698818); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal54e362747f6a5fcdcf7fd32363698818)): ?>
+<?php $component = $__componentOriginal54e362747f6a5fcdcf7fd32363698818; ?>
+<?php unset($__componentOriginal54e362747f6a5fcdcf7fd32363698818); ?>
+<?php endif; ?>
+                <?php endif; ?>
 
-                @if (session('error'))
-                    <x-sweetalert type="error" :message="session('error')" />
-                @endif
+                <?php if(session('error')): ?>
+                    <?php if (isset($component)) { $__componentOriginal54e362747f6a5fcdcf7fd32363698818 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal54e362747f6a5fcdcf7fd32363698818 = $attributes; } ?>
+<?php $component = App\View\Components\Sweetalert::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sweetalert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Sweetalert::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'error','message' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(session('error'))]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal54e362747f6a5fcdcf7fd32363698818)): ?>
+<?php $attributes = $__attributesOriginal54e362747f6a5fcdcf7fd32363698818; ?>
+<?php unset($__attributesOriginal54e362747f6a5fcdcf7fd32363698818); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal54e362747f6a5fcdcf7fd32363698818)): ?>
+<?php $component = $__componentOriginal54e362747f6a5fcdcf7fd32363698818; ?>
+<?php unset($__componentOriginal54e362747f6a5fcdcf7fd32363698818); ?>
+<?php endif; ?>
+                <?php endif; ?>
                 <div class="flex flex-col w-full md:ml-5 mb-5 space-y-5">
                     <div x-data="{ expanded: false, content: '' }" class="w-full   ">
                         <div @click="expanded = !expanded"
@@ -148,7 +245,7 @@
                             <div class="flex items-center">
                                 <a href="#" class="block">
                                     <!-- User Image Logic -->
-                                    <img src="{{ $manageCourse->teacher->teacher_photo && Storage::exists('public/teacher_photos/' . $manageCourse->teacher->teacher_photo) ? asset('storage/teacher_photos/' . $manageCourse->teacher->teacher_photo) : asset('assets/img/user.png') }}"
+                                    <img src="<?php echo e($manageCourse->teacher->teacher_photo && Storage::exists('public/teacher_photos/' . $manageCourse->teacher->teacher_photo) ? asset('storage/teacher_photos/' . $manageCourse->teacher->teacher_photo) : asset('assets/img/user.png')); ?>"
                                         class="shadow-xl border-[.1px] border-gray-500 rounded-full w-9 object-contain mx-auto">
                                 </a>
                                 <div class="flex justify-center p-3.5 ml-2 text-sm text-gray-500">Announce something to
@@ -157,9 +254,9 @@
                         </div>
                         <div x-show="expanded" class="bg-gray-100 p-4 rounded-lg relative" x-cloak>
                             <form id="announcementForm"
-                                action="{{ route('teacher.teacher.postAnnouncement', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id]) }}"
+                                action="<?php echo e(route('teacher.teacher.postAnnouncement', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id])); ?>"
                                 method="POST" onsubmit="logAnnouncement(event)">
-                                @csrf
+                                <?php echo csrf_field(); ?>
                                 <div class="text-gray-500">
                                     Announcement for your student..
                                 </div>
@@ -185,39 +282,39 @@
                             </form>
                         </div>
                     </div>
-                    @if (count($announcementsByAssignment) > 0 || count($classworkByAssignment) > 0)
-                        @foreach (['Announcement' => $announcementsByAssignment, 'Classwork' => $classworkByAssignment] as $type => $items)
-                            @foreach ($items as $contentId => $contentItems)
-                                @foreach ($contentItems as $content)
+                    <?php if(count($announcementsByAssignment) > 0 || count($classworkByAssignment) > 0): ?>
+                        <?php $__currentLoopData = ['Announcement' => $announcementsByAssignment, 'Classwork' => $classworkByAssignment]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $contentId => $contentItems): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php $__currentLoopData = $contentItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $content): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <div class="flex bg-white w-full h-20 rounded-[5px] p-4">
                                         <div class="flex items-center">
-                                            <img src="{{ Auth::user()->teacher_photo && Storage::exists('public/teacher_photos/' . Auth::user()->teacher_photo) ? asset('storage/teacher_photos/' . Auth::user()->teacher_photo) : asset('assets/img/user.png') }}"
+                                            <img src="<?php echo e(Auth::user()->teacher_photo && Storage::exists('public/teacher_photos/' . Auth::user()->teacher_photo) ? asset('storage/teacher_photos/' . Auth::user()->teacher_photo) : asset('assets/img/user.png')); ?>"
                                                 class="shadow-xl border-[.1px] border-gray-500 rounded-full w-9 object-contain mx-auto">
                                         </div>
                                         <div class="flex justify-between w-full">
-                                            @if ($type === 'Announcement')
+                                            <?php if($type === 'Announcement'): ?>
                                                 <div
                                                     class="text-md sm:mt-3 text-tight md:mt-2.5 lg:mt-2 lg:p-1 lg:text-md ml-2 text-md text-black w-full">
-                                                    Posted an {{ strtolower($type) }} <span
-                                                        class="ml-5 text-gray-500 text-sm">{{ date('l, g:i A', strtotime($content['created_at'])) }}</span>
+                                                    Posted an <?php echo e(strtolower($type)); ?> <span
+                                                        class="ml-5 text-gray-500 text-sm"><?php echo e(date('l, g:i A', strtotime($content['created_at']))); ?></span>
                                                 </div>
-                                            @else
-                                                @if ($content['type_of_classwork'] === 'Assignment')
+                                            <?php else: ?>
+                                                <?php if($content['type_of_classwork'] === 'Assignment'): ?>
                                                     <div
                                                         class="text-md sm:mt-3 text-tight md:mt-2.5 lg:mt-2 lg:p-1 lg:text-md ml-2 text-md text-black w-full">
-                                                        Posted an {{ strtolower($content['type_of_classwork']) }} <span
-                                                            class="ml-5 text-gray-500 text-sm">{{ date('l, g:i A', strtotime($content['created_at'])) }}</span>
+                                                        Posted an <?php echo e(strtolower($content['type_of_classwork'])); ?> <span
+                                                            class="ml-5 text-gray-500 text-sm"><?php echo e(date('l, g:i A', strtotime($content['created_at']))); ?></span>
                                                     </div>
-                                                @else
+                                                <?php else: ?>
                                                     <div
                                                         class="text-md sm:mt-3 text-tight md:mt-2.5 lg:mt-2 lg:p-1 lg:text-md ml-2 text-md text-black w-full">
-                                                        Posted a {{ strtolower($content['type_of_classwork']) }} <span
-                                                            class="ml-5 text-gray-500 text-sm">{{ date('l, g:i A', strtotime($content['created_at'])) }}</span>
+                                                        Posted a <?php echo e(strtolower($content['type_of_classwork'])); ?> <span
+                                                            class="ml-5 text-gray-500 text-sm"><?php echo e(date('l, g:i A', strtotime($content['created_at']))); ?></span>
                                                     </div>
-                                                @endif
-                                            @endif
+                                                <?php endif; ?>
+                                            <?php endif; ?>
 
-                                            <div x-cloak x-data="{ showModal: false, contentId: {{ $content['content_id'] }} }">
+                                            <div x-cloak x-data="{ showModal: false, contentId: <?php echo e($content['content_id']); ?> }">
                                                 <div class="p-3 w-28 ml-3 mr-3 text-sm text-center text-gray-500 border rounded-md cursor-pointer border-gray-400 hover:border-blue-500 hover:text-black"
                                                     @click="showModal = true">Click to view</div>
 
@@ -235,42 +332,44 @@
 
                                                     <div
                                                         class="bg-white p-6 rounded-lg shadow-lg -mt-32 max-w-xl w-full mt-5 relative">
-                                                        @if ($type === 'Classwork')
+                                                        <?php if($type === 'Classwork'): ?>
                                                             <button @click="showModal = false"
                                                                 id="closeClassworkModal"
                                                                 class="absolute top-0 right-0 m-2 text-lg text-black">X</button>
-                                                        @endif
+                                                        <?php endif; ?>
 
                                                         <div x-cloak
                                                             class="flex justify-between items-center border-b mb-4 w-full">
-                                                            <h2 class="text-xl font-semibold">{{ $type }} #
-                                                                {{ $content['content_id'] }}</h2>
+                                                            <h2 class="text-xl font-semibold"><?php echo e($type); ?> #
+                                                                <?php echo e($content['content_id']); ?></h2>
 
                                                             <div class="flex items-center">
-                                                                <img src="{{ $manageCourse->teacher->teacher_photo && Storage::exists('public/teacher_photos/' . $manageCourse->teacher->teacher_photo) ? asset('storage/teacher_photos/' . $manageCourse->teacher->teacher_photo) : asset('assets/img/user.png') }}"
+                                                                <img src="<?php echo e($manageCourse->teacher->teacher_photo && Storage::exists('public/teacher_photos/' . $manageCourse->teacher->teacher_photo) ? asset('storage/teacher_photos/' . $manageCourse->teacher->teacher_photo) : asset('assets/img/user.png')); ?>"
                                                                     class="shadow-xl border-[.1px] border-gray-500 rounded-full w-9 object-contain mx-auto mr-2">
-                                                                <p>{{ $manageCourse->teacher->name }}</p>
+                                                                <p><?php echo e($manageCourse->teacher->name); ?></p>
                                                             </div>
                                                         </div>
                                                         <div
                                                             class=" p-2 rounded h-auto text-lg bg-white overflow-y-auto">
-                                                            {!! $content['content'] !!}
+                                                            <?php echo $content['content']; ?>
+
                                                         </div>
 
-                                                        @if ($type === 'Classwork')
-                                                            @foreach ($file as $files)
-                                                                @if ($content['content_id'] === $files->classwork_id)
-                                                                    @if ($content['type_of_classwork'] != 'Practice Problem')
+                                                        <?php if($type === 'Classwork'): ?>
+                                                            <?php $__currentLoopData = $file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                <?php if($content['content_id'] === $files->classwork_id): ?>
+                                                                    <?php if($content['type_of_classwork'] != 'Practice Problem'): ?>
                                                                         <li
                                                                             class="mb-2 flex items-center border rounded p-2">
-                                                                            <img src="{{ route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg']) }}"
-                                                                                alt="{{ $files->classwork_file }}"
+                                                                            <img src="<?php echo e(route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg'])); ?>"
+                                                                                alt="<?php echo e($files->classwork_file); ?>"
                                                                                 class="w-16 h-16 object-cover mr-3">
-                                                                            <div x-cloak x-data="{ showModal1: false, contentId: {{ $content['content_id'] }} }">
+                                                                            <div x-cloak x-data="{ showModal1: false, contentId: <?php echo e($content['content_id']); ?> }">
                                                                                 <a @click="showModal1 = true"
-                                                                                    class="text-blue-500 hover:underline">{{ $files->classwork_file }}</a>
+                                                                                    class="text-blue-500 hover:underline"><?php echo e($files->classwork_file); ?></a>
                                                                                 <div class="text-gray-500 text-sm">
-                                                                                    {{ strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION)) }}
+                                                                                    <?php echo e(strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION))); ?>
+
                                                                                 </div>
                                                                                 <div x-show="showModal1" x-cloak
                                                                                     x-transition:enter="transition ease-out duration-300"
@@ -283,7 +382,7 @@
                                                                                     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
 
                                                                                     <iframe frameborder="0"
-                                                                                        src="{{ route('student.classroom.files.show', ['id' => $files->id]) }}#toolbar=0&scrollbar=10&view=FitH"
+                                                                                        src="<?php echo e(route('student.classroom.files.show', ['id' => $files->id])); ?>#toolbar=0&scrollbar=10&view=FitH"
                                                                                         width="600" height="800"
                                                                                         style=" overflow: auto;"></iframe>
                                                                                     <div
@@ -307,9 +406,9 @@
                                                                                     </div>
                                                                                 </div>
                                                                         </li>
-                                                                    @endif
+                                                                    <?php endif; ?>
 
-                                                                    @php
+                                                                    <?php
                                                                         $submitted = $student_file
                                                                             ->where(
                                                                                 'classwork_id',
@@ -317,91 +416,22 @@
                                                                             )
                                                                             ->where('student_id', Auth::id())
                                                                             ->isNotEmpty();
-                                                                    @endphp
-                                                                    @if ($content['type_of_classwork'] === 'Practice Problem')
-                                                                        {{-- <div id="countdown" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4" x-data="{ deadline: new Date('{{ $content['deadline'] }}') }" x-init="setInterval(() => {
-                                                                                    let now = new Date().getTime();
-                                                                                    let distance = deadline - now;
-                                                                                    if (distance < 0) {
-                                                                                       
-                                                                                    } else {
-                                                                                        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                                                                                        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                                                                        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                                                                                        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                                                                                        document.getElementById('countdown').innerHTML = days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's ';
-                                                                                    }
-                                                                                }, 1000)">
-                                                                                </div> --}}
+                                                                    ?>
+                                                                    <?php if($content['type_of_classwork'] === 'Practice Problem'): ?>
+                                                                        
 
-                                                                        {{-- @if (!$submitted)
-
-                                                                                <template x-if="showModal">
-                                                                                    <div id="countdown{{$content['content_id']}}" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4"   x-show="showModal" x-data="{ timer: 3600, interval: null, expired: false }" x-init="
-                                                                                    interval = setInterval(() => {
-                                                                                        if (timer > 0) {
-                                                                                            timer--;
-                                                                                            let hours = Math.floor(timer / 3600);
-                                                                                            let minutes = Math.floor((timer % 3600) / 60);
-                                                                                            let seconds = Math.floor(timer % 60);
-                                                                                            document.getElementById('countdown{{$content['content_id']}}').innerHTML = hours + 'h ' + minutes + 'm ' + seconds + 's ';
-                                                                                        } else {
-                                                                                            clearInterval(interval);
-                                                                                            expired = true;
-                                                                                            document.getElementById('countdown{{$content['content_id']}}').innerHTML = 'Time\'s up!';
-                
-                                                                                            updateStatusToMissing({{ $content['content_id'] }});
-                                                                                        }
-                                                                                    }, 1000);
-                                                                                ">
-                                                                                </div>
-                                                                                </template>
-
-                                                                                {{-- <div x-data="{ open: false, timer: 3600, interval: null, expired: false }"
-                                                                                    x-show="showModal"
-                                                                                    @keydown.escape.window="open = false"
-                                                                                    @click.away="open = false"
-                                                                                    x-init="
-                                                                                        $watch('open', value => {
-                                                                                            if (value) {
-                                                                                                startCountdown();
-                                                                                            } else {
-                                                                                                clearInterval(interval);
-                                                                                            }
-                                                                                        });
-
-                                                                                        function startCountdown() {
-                                                                                            interval = setInterval(() => {
-                                                                                                if (timer > 0) {
-                                                                                                    timer--;
-                                                                                                    let hours = Math.floor(timer / 3600);
-                                                                                                    let minutes = Math.floor((timer % 3600) / 60);
-                                                                                                    let seconds = Math.floor(timer % 60);
-                                                                                                    $el.querySelector('#countdown').innerHTML = hours + 'h ' + minutes + 'm ' + seconds + 's ';
-                                                                                                } else {
-                                                                                                    clearInterval(interval);
-                                                                                                    expired = true;
-                                                                                                    $el.querySelector('#countdown').innerHTML = 'Time\'s up!';
-                                                                                                    updateStatusToMissing({{ $content['content_id'] }});
-                                                                                                }
-                                                                                            }, 1000);
-                                                                                        }
-                                                                                    "
-                                                                                    class="modal">
-                                                                                    </div> --}}
-                                                                        {{-- @else
-                                                                                
-                                                                                @endif --}}
-                                                                    @else
+                                                                        
+                                                                        
+                                                                    <?php else: ?>
                                                                         <div
                                                                             class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">
-                                                                            {{ $content['deadline'] }}</div>
+                                                                            <?php echo e($content['deadline']); ?></div>
                                                                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
                                                                             <div
                                                                                 class="flex justify-between items-center mb-4">
                                                                                 <h3 class="text-lg font-semibold">Your
                                                                                     work</h3>
-                                                                                @php
+                                                                                <?php
                                                                                     $submitted = $student_file
                                                                                         ->where(
                                                                                             'classwork_id',
@@ -412,28 +442,28 @@
                                                                                             Auth::id(),
                                                                                         )
                                                                                         ->isNotEmpty();
-                                                                                @endphp
-                                                                                @if (Carbon\Carbon::parse($content['deadline_timestamp'])->isPast() && !$submitted)
+                                                                                ?>
+                                                                                <?php if(Carbon\Carbon::parse($content['deadline_timestamp'])->isPast() && !$submitted): ?>
                                                                                     <span class="text-red-600">
                                                                                         Missing
                                                                                     </span>
-                                                                                @elseif(!$submitted)
+                                                                                <?php elseif(!$submitted): ?>
                                                                                     <span class="text-green-600">
                                                                                         Assigned
                                                                                     </span>
-                                                                                @else
+                                                                                <?php else: ?>
                                                                                     <span class="text-blue-600">
                                                                                         Submitted
                                                                                     </span>
-                                                                                @endif
+                                                                                <?php endif; ?>
 
                                                                             </div>
                                                                             <form
-                                                                                action="{{ route('student.student.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classwork_id' => $content['content_id']]) }}"
+                                                                                action="<?php echo e(route('student.student.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classwork_id' => $content['content_id']])); ?>"
                                                                                 method="POST"
                                                                                 enctype="multipart/form-data">
-                                                                                @csrf
-                                                                                @if (!$submitted)
+                                                                                <?php echo csrf_field(); ?>
+                                                                                <?php if(!$submitted): ?>
                                                                                     <div
                                                                                         class="flex justify-between items-center">
                                                                                         <input id="files"
@@ -454,7 +484,7 @@
                                                                                                 ">
 
                                                                                     </div>
-                                                                                @else
+                                                                                <?php else: ?>
                                                                                     <div
                                                                                         class="flex justify-between items-center">
                                                                                         <input id="files"
@@ -475,31 +505,31 @@
                                                                                             "
                                                                                             disabled required>
                                                                                     </div>
-                                                                                @endif
+                                                                                <?php endif; ?>
 
-                                                                                @if (Carbon\Carbon::parse($content['deadline_timestamp'])->isPast())
+                                                                                <?php if(Carbon\Carbon::parse($content['deadline_timestamp'])->isPast()): ?>
                                                                                     <p
                                                                                         class="text-sm text-gray-500 mt-2">
                                                                                         Your teacher is not accepting
                                                                                         work at this time</p>
-                                                                                @endif
-                                                                                {{-- <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p> --}}
+                                                                                <?php endif; ?>
+                                                                                
                                                                         </div>
-                                                                        @if (!$submitted)
+                                                                        <?php if(!$submitted): ?>
                                                                             <button type="submit"
                                                                                 class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full">Submit</button>
-                                                                        @else
+                                                                        <?php else: ?>
                                                                             <button type="submit"
                                                                                 class="px-4 py-2 mt-5 bg-gray-300 text-black-500 rounded-md w-full"
                                                                                 disabled>Submit</button>
-                                                                        @endif
+                                                                        <?php endif; ?>
 
                                                                         <p></p>
                                                                         </form>
-                                                                        @foreach ($student_file as $student_files)
-                                                                            @if ($student_files->classwork_id === $content['content_id'] && $student_files->student_id === Auth::id())
-                                                                                @foreach ($solution as $solutions)
-                                                                                    @if ($solutions->classwork_id === $content['content_id'])
+                                                                        <?php $__currentLoopData = $student_file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student_files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                            <?php if($student_files->classwork_id === $content['content_id'] && $student_files->student_id === Auth::id()): ?>
+                                                                                <?php $__currentLoopData = $solution; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $solutions): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                                    <?php if($solutions->classwork_id === $content['content_id']): ?>
                                                                                         <div
                                                                                             class="mt-4 p-4 bg-gray-100 rounded-lg">
                                                                                             <div
@@ -510,33 +540,34 @@
 
                                                                                                 <li
                                                                                                     class="mb-2 flex items-center border rounded p-2">
-                                                                                                    <a href="{{ route('student.solutions.show', $solutions->id) }}"
-                                                                                                        class="text-blue-500 hover:underline">{{ basename($solutions->solution_file) }}</a>
+                                                                                                    <a href="<?php echo e(route('student.solutions.show', $solutions->id)); ?>"
+                                                                                                        class="text-blue-500 hover:underline"><?php echo e(basename($solutions->solution_file)); ?></a>
                                                                                                     <div
                                                                                                         class="text-gray-500 text-sm ml-2">
-                                                                                                        {{ strtoupper(pathinfo($solutions->solution_file, PATHINFO_EXTENSION)) }}
+                                                                                                        <?php echo e(strtoupper(pathinfo($solutions->solution_file, PATHINFO_EXTENSION))); ?>
+
                                                                                                     </div>
                                                                                                 </li>
                                                                                             </div>
                                                                                         </div>
-                                                                                    @endif
-                                                                                @endforeach
-                                                                            @endif
-                                                                        @endforeach
+                                                                                    <?php endif; ?>
+                                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                            <?php endif; ?>
+                                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                         <div class="flex justify-end mt-4">
 
                                                                         </div>
-                                                                    @endif
-                                                                @endif
-                                                            @endforeach
-                                                        @endif
-                                                        @if ($content['type_of_classwork'] === 'Practice Problem')
+                                                                    <?php endif; ?>
+                                                                <?php endif; ?>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php endif; ?>
+                                                        <?php if($content['type_of_classwork'] === 'Practice Problem'): ?>
                                                             <button type="submit"
                                                                 class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full"><a
-                                                                    href="{{ route('student.classwork.index', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classworkID' => $content['content_id']]) }}"
+                                                                    href="<?php echo e(route('student.classwork.index', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classworkID' => $content['content_id']])); ?>"
                                                                     class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">Start</a></button>
-                                                        @endif
-                                                        @if ($type === 'Announcement')
+                                                        <?php endif; ?>
+                                                        <?php if($type === 'Announcement'): ?>
                                                             <div class="flex justify-end mt-4">
                                                                 <button type="submit"
                                                                     class="px-4 py-2 mx-4 bg-blue-500 hover:bg-blue-700 text-white rounded-md"
@@ -544,7 +575,7 @@
                                                                     Close
                                                                 </button>
                                                             </div>
-                                                        @endif
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -573,29 +604,29 @@
                                                                     <div x-cloak
                                                                         class="flex justify-between items-center">
                                                                         <h2 class="text-xl font-semibold">Edit
-                                                                            {{ $type }}</h2>
+                                                                            <?php echo e($type); ?></h2>
                                                                         <button @click="open = false"
                                                                             class="text-lg text-hover:text-red-500">×</button>
                                                                     </div>
 
                                                                     <!-- Modal body -->
                                                                     <form
-                                                                        id="updateForm_{{ $type }}_{{ $content['content_id'] }}"
-                                                                        action="{{ route('teacher.teacher.updateAnnouncement', [
+                                                                        id="updateForm_<?php echo e($type); ?>_<?php echo e($content['content_id']); ?>"
+                                                                        action="<?php echo e(route('teacher.teacher.updateAnnouncement', [
                                                                             'userID' => auth()->user()->id,
                                                                             'assignmentTableID' => $manageCourse->id,
                                                                             'courseID' => $manageCourse->course_id,
                                                                             'contentID' => $contentId,
                                                                             'type' => $type,
                                                                             'announcementID' => $content['content_id'],
-                                                                        ]) }}"
+                                                                        ])); ?>"
                                                                         method="POST">
-                                                                        @csrf
-                                                                        @method('PUT')
+                                                                        <?php echo csrf_field(); ?>
+                                                                        <?php echo method_field('PUT'); ?>
 
                                                                         <div x-data="{
-                                                                            message: `{!! $content['content'] !!}`,
-                                                                            initialMessage: `{!! $content['content'] !!}`,
+                                                                            message: `<?php echo $content['content']; ?>`,
+                                                                            initialMessage: `<?php echo $content['content']; ?>`,
                                                                             isEdited: false
                                                                         }">
                                                                             <!-- Editable content -->
@@ -603,7 +634,7 @@
                                                                                 @input="message = $event.target.innerHTML; isEdited = true"
                                                                                 x-ref="editable"
                                                                                 class="w-full border p-2 mt-2 rounded h-40 bg-white overflow-y-auto">
-                                                                                {!! $content['content'] !!}</div>
+                                                                                <?php echo $content['content']; ?></div>
 
                                                                             <!-- Hidden textarea to hold the content -->
                                                                             <textarea hidden name="content" x-text="message"></textarea>
@@ -627,7 +658,7 @@
                                                                                     @click="open = false;"
                                                                                     class="bg-red-500 text-white px-4 py-2 rounded mr-2">Cancel</button>
                                                                                 <button type="submit"
-                                                                                    id="updateButton_{{ $type }}_{{ $content['content_id'] }}"
+                                                                                    id="updateButton_<?php echo e($type); ?>_<?php echo e($content['content_id']); ?>"
                                                                                     class="text-white px-4 py-2 rounded"
                                                                                     :class="{
                                                                                         'bg-blue-500 cursor-pointer': isEdited,
@@ -644,20 +675,20 @@
                                                             </div>
                                                         </div>
                                                         <form
-                                                            action="{{ route('teacher.teacher.removeAnnouncement', [
+                                                            action="<?php echo e(route('teacher.teacher.removeAnnouncement', [
                                                                 'userID' => auth()->user()->id,
                                                                 'assignmentTableID' => $manageCourse->id,
                                                                 'courseID' => $manageCourse->course_id,
                                                                 'type' => $type,
                                                                 'contentID' => $contentId,
                                                                 'announcementID' => $content['content_id'],
-                                                            ]) }}"
+                                                            ])); ?>"
                                                             method="POST">
-                                                            @csrf
-                                                            @method('PUT')
+                                                            <?php echo csrf_field(); ?>
+                                                            <?php echo method_field('PUT'); ?>
 
                                                             <input type="hidden" name="content_id"
-                                                                value="{{ $content['content_id'] }}">
+                                                                value="<?php echo e($content['content_id']); ?>">
 
 
                                                         </form>
@@ -666,17 +697,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
-                            @endforeach
-                        @endforeach
-                    @else
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php else: ?>
                         <div class="flex bg-white w-full h-20 rounded-[5px] p-4 ">
                             <div class="flex items-center mx-auto">
                                 <div class="p-3.5 w-full ml-2 text-md text-black">No posted announcement / materials or
                                     modules</div>
                             </div>
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <!-- MODAL -->
@@ -697,11 +728,47 @@
                 </div>
             </div>
         </div>
-    </x-student.section-div-style>
-</x-student-app-layout>
+     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala5bba5a6e530dd54f8ed958a04b808fc)): ?>
+<?php $attributes = $__attributesOriginala5bba5a6e530dd54f8ed958a04b808fc; ?>
+<?php unset($__attributesOriginala5bba5a6e530dd54f8ed958a04b808fc); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala5bba5a6e530dd54f8ed958a04b808fc)): ?>
+<?php $component = $__componentOriginala5bba5a6e530dd54f8ed958a04b808fc; ?>
+<?php unset($__componentOriginala5bba5a6e530dd54f8ed958a04b808fc); ?>
+<?php endif; ?>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalcc67118e210132cf50b1c183d70505e3)): ?>
+<?php $attributes = $__attributesOriginalcc67118e210132cf50b1c183d70505e3; ?>
+<?php unset($__attributesOriginalcc67118e210132cf50b1c183d70505e3); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalcc67118e210132cf50b1c183d70505e3)): ?>
+<?php $component = $__componentOriginalcc67118e210132cf50b1c183d70505e3; ?>
+<?php unset($__componentOriginalcc67118e210132cf50b1c183d70505e3); ?>
+<?php endif; ?>
 
-<x-show-hide-sidebar toggleButtonId="toggleButton" sidebarContainerId="sidebarContainer"
-    dashboardContentId="dashboardContent" toggleIconId="toggleIcon" />
+<?php if (isset($component)) { $__componentOriginal7f83d574ebf694838d71081ed65bad7b = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal7f83d574ebf694838d71081ed65bad7b = $attributes; } ?>
+<?php $component = App\View\Components\ShowHideSidebar::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('show-hide-sidebar'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\ShowHideSidebar::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['toggleButtonId' => 'toggleButton','sidebarContainerId' => 'sidebarContainer','dashboardContentId' => 'dashboardContent','toggleIconId' => 'toggleIcon']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal7f83d574ebf694838d71081ed65bad7b)): ?>
+<?php $attributes = $__attributesOriginal7f83d574ebf694838d71081ed65bad7b; ?>
+<?php unset($__attributesOriginal7f83d574ebf694838d71081ed65bad7b); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal7f83d574ebf694838d71081ed65bad7b)): ?>
+<?php $component = $__componentOriginal7f83d574ebf694838d71081ed65bad7b; ?>
+<?php unset($__componentOriginal7f83d574ebf694838d71081ed65bad7b); ?>
+<?php endif; ?>
 
 <script>
     function updateInput() {
@@ -839,20 +906,7 @@
     });
 </script>
 
-{{-- <script>
-    //upload multiple files display
-    function displaySelectedFiles(input) {
-      const fileList = document.getElementById('fileList');
-      fileList.innerHTML = ''; // Clear previous content
 
-      for (let i = 0; i < input.files.length; i++) {
-        const fileName = input.files[i].name;
-        const listItem = document.createElement('div');
-        listItem.textContent = fileName;
-        fileList.appendChild(listItem);
-      }
-    }
-  </script> --}}
 
 <style>
     #floatingMenu2 {
@@ -1012,3 +1066,4 @@
         document.execCommand(command, false, null);
     }
 </script>
+<?php /**PATH C:\Users\Joshua Tabura\Desktop\computer-aided-model-system-for-student\resources\views/student/courses/manage-course/index.blade.php ENDPATH**/ ?>

@@ -12,9 +12,9 @@ class CourseClassworkFiles extends Model
     protected $table = 'course_classwork_files';
 
     protected $fillable = [
-        'classwork_files_id',
         'classwork_files',
         'classwork_id',
+        'sub_classwork_id'
     ];
 
     public function courseFiles()

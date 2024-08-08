@@ -913,7 +913,7 @@ function postContent() {
         classworkFileInput.type = 'file';
         classworkFileInput.name = 'files[]';
         classworkFileInput.classList.add('block', 'w-full', 'text-sm', 'text-gray-500', 'file:me-4', 'file:py-2', 'file:px-4', 'file:rounded-lg', 'file:border-0', 'file:text-sm', 'file:font-semibold', 'file:bg-blue-600', 'file:text-white', 'hover:file:bg-blue-700', 'file:disabled:opacity-50', 'file:disabled:pointer-events-none', 'dark:text-neutral-500', 'dark:file:bg-blue-500', 'dark:hover:file:bg-blue-400');
-        classworkFileInput.multiple = true;
+        // classworkFileInput.multiple = true;
         // classworkFileInput.required = true;
         classworkFileInput.onchange = function() {
             displaySelectedFiles(this);
@@ -933,8 +933,7 @@ function postContent() {
         solutionFileInput.type = 'file';
         solutionFileInput.name = 'solution_files[]';
         solutionFileInput.classList.add('block', 'w-full', 'text-sm', 'text-gray-500', 'file:me-4', 'file:py-2', 'file:px-4', 'file:rounded-lg', 'file:border-0', 'file:text-sm', 'file:font-semibold', 'file:bg-blue-600', 'file:text-white', 'hover:file:bg-blue-700', 'file:disabled:opacity-50', 'file:disabled:pointer-events-none', 'dark:text-neutral-500', 'dark:file:bg-blue-500', 'dark:hover:file:bg-blue-400');
-        solutionFileInput.multiple = true;
-
+        
         solutionFileDiv.appendChild(solutionFileLabel);
         solutionFileDiv.appendChild(solutionFileInput);
 

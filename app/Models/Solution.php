@@ -17,6 +17,7 @@ class Solution extends Model
         'solution_file',
         'course_assignment_id',
         'classwork_id',
+        'sub_classwork_id'
     ];
 
     public function courseFiles()

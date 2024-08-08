@@ -141,9 +141,10 @@ class ManageCourseController extends Controller
             $rules =  [
                 'content1' => 'required|string',
                 'dynamicInputs.*' => 'nullable|string',
+                'solution_files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
             ];
 
-            // dd($request->all());
+            
             
             // dd($request->input('content1'));
         } 
@@ -152,6 +153,7 @@ class ManageCourseController extends Controller
                 'contentAssignment' => 'required|string',
                 'deadlineAssignment' => 'date_format:Y-m-d\TH:i',
                 'files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
+                
             ];
 
            
@@ -169,34 +171,104 @@ class ManageCourseController extends Controller
         $request->validate($rules);
         
         if ($selectedOption === 'Practice Problem') {
+            // Create the CourseContentClasswork record
             $classwork = CourseContentClasswork::create([
                 'classwork' => $request->input('content1'),
                 'type' => $request->input('content2'),
             ]);
 
-            
+            // Get dynamic inputs
             $inputs = $request->input('dynamicInputs');
 
-
-
             // Prepare data for bulk insert
-            $data = [];
+            $subClassworkData = [];
             foreach ($inputs as $input) {
-            
                 if (!empty($input)) {
-                    $data[] = [
+                    $subClassworkData[] = [
                         'title' => 'test muna',
                         'content' => $input,
-                        'classwork_id' => $classwork->id
-                    ]; // Adjust field name as needed
+                        'classwork_id' => $classwork->id,
+                    ];
                 }
             }
-        
-            // Bulk insert the data
-            if (!empty($data)) {
-                SubClasswork::insert($data);
+
+            // Bulk insert SubClasswork records
+            if (!empty($subClassworkData)) {
+                SubClasswork::insert($subClassworkData);
             }
-        } 
+
+            // Fetch the SubClasswork records to retrieve their IDs
+            $subClassworks = SubClasswork::where('classwork_id', $classwork->id)->get();
+            // dd($subClassworks);
+
+            // Process and store files
+            $fileData = [];
+            if ($files = $request->file('files')) {
+                foreach ($subClassworks as $index => $subClasswork) {  
+                        
+                            $fileNameWithExt = $files[$index]->getClientOriginalName();
+                            $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+                            $extension = $files[$index]->getClientOriginalExtension();
+                            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+
+                            if ($extension == 'pdf') {
+                                // Generate a thumbnail for PDF files
+                                $pdf = new Imagick($files[$index]->getPathname() . '[0]'); // Get the first page
+                                $pdf->setImageFormat('jpeg');
+                                $pdf->thumbnailImage(150, 150, true, true);
+                                Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore . '.jpg', $pdf);
+                            }
+
+                            $path = $files[$index]->storeAs('public/classwork_files', $fileNameToStore);
+
+                            $fileData[] = [
+                                'classwork_file' => $fileNameToStore,
+                                'classwork_id' => $classwork->id,
+                                'sub_classwork_id' => $subClasswork->id,             
+                            ];
+                    
+                    
+                }
+            }
+
+            $solutionFileData = [];
+            if ($files = $request->file('solution_files')) {
+                foreach ($subClassworks as $index => $subClasswork) {  
+                        
+                            $fileNameWithExt = $files[$index]->getClientOriginalName();
+                            $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+                            $extension = $files[$index]->getClientOriginalExtension();
+                            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+
+                            if ($extension == 'pdf') {
+                                // Generate a thumbnail for PDF files
+                                $pdf = new Imagick($files[$index]->getPathname() . '[0]'); // Get the first page
+                                $pdf->setImageFormat('jpeg');
+                                $pdf->thumbnailImage(150, 150, true, true);
+                                Storage::put('public/classwork_files/solution' . $fileNameToStore . '.jpg', $pdf);
+                            }
+
+                            $path = $files[$index]->storeAs('public/classwork_files', $fileNameToStore);
+
+                            $solutionFileData[] = [
+                                'solution_file' => $fileNameToStore,
+                                'course_assignment_id'=> $assignmentTableID,
+                                'classwork_id' => $classwork->id,
+                                'sub_classwork_id' => $subClasswork->id,             
+                            ];
+                    
+                    
+                }
+            }
+
+
+            
+                CourseClassworkFiles::insert($fileData);
+                Solution::insert($solutionFileData);
+            
+        }
+
+            
         elseif ($selectedOption === 'Assignment') {
             $classwork = CourseContentClasswork::create([
                 'classwork' => $request->input('contentAssignment'),
@@ -206,6 +278,7 @@ class ManageCourseController extends Controller
 
             $fileData = [];
             if($files=$request->file('files')){
+        
                 foreach ($files as $file) {
 
                     $fileNameWithExt = $file->getClientOriginalName();
@@ -232,6 +305,7 @@ class ManageCourseController extends Controller
                 }
                 
             }
+            
 
             CourseClassworkFiles::insert($fileData);
 
@@ -270,6 +344,7 @@ class ManageCourseController extends Controller
                 }
                 
             }
+            
 
             CourseClassworkFiles::insert($fileData);
         }

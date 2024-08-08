@@ -103,6 +103,9 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
 
     Route::get('/classwork/{userID}/{classworkID}', [StudentCourseController::class, 'showClasswork'])->name('classwork.show');
 
+    Route::get('/sub-classwork/{userID}/{assignmentTableID}/{courseID}/{classworkID}', [StudentCourseController::class, 'subClasswork'])
+    ->name('classwork.index');
+
 
     Route::post('/join-class',[StudentController::class, 'joinClass'])
     ->name('joinClass');
@@ -119,15 +122,18 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
     Route::post('/post-announcement/{userID}/{assignmentTableID}/{courseID}', [StudentCourseController::class, 'postAnnouncement'])
     ->name('teacher.postAnnouncement');// add announcement
     Route::post('/post-classwork/{userID}/{assignmentTableID}/{courseID}/{classwork_id}', [StudentCourseController::class, 'postClasswork'])
-    ->name('student.postClasswork');// add announcement
+    ->name('student.postClasswork');
+
+    Route::post('/post-classwork/{userID}/{assignmentTableID}/{courseID}/{classwork_id}/{subClassworkID}', [StudentController::class, 'postClasswork'])
+    ->name('student.postAnswer');// add announcement
    
     Route::put('/remove-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'removeAnnouncement'])
     ->name('teacher.removeAnnouncement');//remove announcement
     Route::put('/update-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'updateAnnouncement'])
     ->name('teacher.updateAnnouncement'); //update announcement
 
-    Route::get('/manage-classwork/{userID}/{assignmentTableID}/{courseID}', [ManageClassworkController::class, 'index'])
-    ->name('classwork.index');
+    // Route::get('/manage-classwork/{userID}/{assignmentTableID}/{courseID}', [ManageClassworkController::class, 'index'])
+    // ->name('classwork.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
