@@ -11,6 +11,8 @@ use App\Models\AssignCourseAnnouncement;
 use App\Models\CourseContentClasswork;
 use App\Models\CourseClassworkFiles;
 use App\Models\Solution;
+use App\Models\Question;
+use App\Models\Choice;
 use App\Models\SubClasswork;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -150,9 +152,9 @@ class ManageCourseController extends Controller
         } 
         elseif ($selectedOption === 'Assignment') {
             $rules = [
-                'contentAssignment' => 'required|string',
-                'deadlineAssignment' => 'date_format:Y-m-d\TH:i',
-                'files.*' => 'nullable|mimes:pdf,jpeg,png,jpg,gif,svg,doc,docx,xls,xlsx',
+                 'questions.*' => 'required|string',
+                'choices.*.*' => 'required|string',
+                'correct_choice.*' => 'required'
                 
             ];
 
@@ -270,45 +272,43 @@ class ManageCourseController extends Controller
 
             
         elseif ($selectedOption === 'Assignment') {
-            $classwork = CourseContentClasswork::create([
-                'classwork' => $request->input('contentAssignment'),
+            $totalScore = 0;
+             $classwork = CourseContentClasswork::create([
+                'classwork' => '',
                 'type' => $request->input('content2'),
-                'deadline' => $request->input('deadlineAssignment'),
             ]);
+            // dd($request->all());
+        // Loop through each question
+            foreach ($request->input('questions') as $questionIndex => $questionText) {
+                // Save the question to the database
+                $question = new Question();
+                $question->text = $questionText;
+                $question->classwork_id = $classwork->id;
+                $question->save();
 
-            $fileData = [];
-            if($files=$request->file('files')){
-        
-                foreach ($files as $file) {
-
-                    $fileNameWithExt = $file->getClientOriginalName();
-                    $filename = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                    $extension = $file->getClientOriginalExtension();
-                    $fileNameToStore = $filename.'_'.time().'.'.$extension;
+                // Save each choice for the question
+                if (isset($request->choices[$questionIndex])) {
                     
+                    foreach ($request->choices[$questionIndex] as $choiceIndex => $choiceText) {
+                        $choice = new Choice();
+                        $choice->question_id = $question->id;
+                        $choice->text = $choiceText;
 
-                   
-                    if ($extension == 'pdf') {
-                        // Generate a thumbnail for PDF files
-                        $pdf = new Imagick($file->getPathname() . '[0]'); // Get the first page
-                        $pdf->setImageFormat('jpeg');
-                        $pdf->thumbnailImage(150, 150, true, true);
-                        Storage::put('public/classwork_files/thumbnails/' . $fileNameToStore . '.jpg', $pdf);
+                        // Set the correct choice
+                        $choice->is_correct = $request->correct_choice[$questionIndex] == $choiceIndex;
+                        
+                        $choice->save();
+
+                        if ($choice->is_correct) {
+                            $totalScore++;
+                        }
                     }
-
-                    $path = $file->storeAs('public/classwork_files', $fileNameToStore);
-                   
-                    $fileData[] = [
-                        'classwork_file' => $fileNameToStore,
-                        'classwork_id' => $classwork->id,             
-                    ];
                 }
-                
             }
-            
 
-            CourseClassworkFiles::insert($fileData);
+        // Save the total score if necessary or return it to the view
 
+        // Redirect back with success message and total score
         } 
         elseif ($selectedOption === 'Module') {
             $classwork = CourseContentClasswork::create([

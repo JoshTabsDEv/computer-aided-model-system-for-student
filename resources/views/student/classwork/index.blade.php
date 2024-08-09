@@ -216,7 +216,7 @@
                             @if (!$submitted)
                                 <div id="countdown{{ $subClassworks->id }}"
                                     class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4"
-                                    x-data="{ timer: 3600, interval: null, expired: false }" x-init="interval = setInterval(() => {
+                                    x-data="{ timer: 5, interval: null, expired: false }" x-init="interval = setInterval(() => {
                                         if (timer > 0) {
                                             timer--;
                                             let hours = Math.floor(timer / 3600);

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Auth\CourseController;
 use App\Http\Controllers\Admin\Auth\TeacherController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentCourseController;
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\ManageClassworkController;
 use App\Http\Controllers\Admin\Auth\TeacherCourseController;
 use Illuminate\Support\Facades\Route;
@@ -126,11 +127,15 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
 
     Route::post('/post-classwork/{userID}/{assignmentTableID}/{courseID}/{classwork_id}/{subClassworkID}', [StudentController::class, 'postClasswork'])
     ->name('student.postAnswer');// add announcement
+    
+    Route::post('/assignments', [AssignmentController::class, 'store'])->name('assignment.store');
    
     Route::put('/remove-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'removeAnnouncement'])
     ->name('teacher.removeAnnouncement');//remove announcement
     Route::put('/update-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'updateAnnouncement'])
     ->name('teacher.updateAnnouncement'); //update announcement
+
+    Route::post('/assignments/{assignmentId}/submit', [StudentCourseController::class, 'submit'])->name('assignment.submit');
 
     // Route::get('/manage-classwork/{userID}/{assignmentTableID}/{courseID}', [ManageClassworkController::class, 'index'])
     // ->name('classwork.index');

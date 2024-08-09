@@ -14,6 +14,8 @@ use App\Models\StudentByCourse;
 use App\Models\StudentClasswork;
 use App\Models\SubClasswork;
 use App\Models\Solution;
+use App\Models\Question;
+use App\Models\Choice;
 use App\Models\CourseClassworkFiles;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -31,7 +33,7 @@ class StudentCourseController extends Controller
         $user = Auth::id();
 
 
-
+        
         $course_code = Course::where('id', $courseID)->firstOrFail();
 
         $manageCourse = CourseAssignment::where('id', $assignmentTableID)
@@ -43,7 +45,7 @@ class StudentCourseController extends Controller
             ->with('courseStudent')
             ->get();
 
-
+        
 
         $courseContent = AssignCourseContent::where('course_assignments_id', $assignmentTableID)
             ->with('courseAssignment')
@@ -53,6 +55,7 @@ class StudentCourseController extends Controller
 
         $classwork_files = CourseClassworkFiles::all();
         $solution_files = Solution::all();
+        $question_files = Question::all();
         $student_classwork = StudentClasswork::where('course_assignment_id', $assignmentTableID)
             ->get();
 
@@ -104,7 +107,8 @@ class StudentCourseController extends Controller
             'student_file' => $student_classwork,
             'file' => $classwork_files,
             'solution' => $solution_files,
-            'current_time' => $currentTime
+            'current_time' => $currentTime,
+            'questions' => $question_files
         ]);
     }
 
@@ -255,6 +259,9 @@ class StudentCourseController extends Controller
         $subClasswork = SubClasswork::where('classwork_id', $classworkID)
             ->get();
         ;
+        $subClasswork1 = SubClasswork::where('classwork_id', $classworkID)
+            ->first();
+        ;
 
        
 
@@ -265,6 +272,7 @@ class StudentCourseController extends Controller
         return view('student.classwork.index', [
             'manageCourse' => $manageCourse,
             'subClasswork' => $subClasswork,
+            'classwork'=> $subClasswork1,
             'enrolledStudent' => $enrolledStudent,
             'studentClasswork' => $studentClasswork,
         ]);
@@ -414,4 +422,25 @@ class StudentCourseController extends Controller
     {
         //
     }
+
+    public function submit(Request $request, $assignmentId)
+{
+    $answers = $request->input('answers');
+
+    $score = 0;
+
+    // Loop through the student's answers and calculate the score
+    foreach ($answers as $questionId => $choiceId) {
+        $choice = Choice::find($choiceId);
+        
+        if ($choice->is_correct) {
+            $score++;
+        }
+    }
+
+    // Save the student's score or do any additional processing here
+
+    // Redirect back with the score
+    return redirect()->route('student.assignment.show', $assignmentId)->with('success', 'Assignment submitted successfully!')->with('score', $score);
+}
 }

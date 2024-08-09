@@ -261,7 +261,7 @@
                                                             @foreach ($file as $files)
                                                                 @if ($content['content_id'] === $files->classwork_id)
                                                                     @if ($content['type_of_classwork'] != 'Practice Problem')
-                                                                        <li
+                                                                        {{-- <li
                                                                             class="mb-2 flex items-center border rounded p-2">
                                                                             <img src="{{ route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg']) }}"
                                                                                 alt="{{ $files->classwork_file }}"
@@ -306,7 +306,7 @@
                                                                                         </button>
                                                                                     </div>
                                                                                 </div>
-                                                                        </li>
+                                                                        </li> --}}
                                                                     @endif
 
                                                                     @php
@@ -393,7 +393,7 @@
                                                                                 
                                                                                 @endif --}}
                                                                     @else
-                                                                        <div
+                                                                        {{-- <div
                                                                             class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">
                                                                             {{ $content['deadline'] }}</div>
                                                                         <div class="mt-4 p-4 bg-gray-100 rounded-lg">
@@ -484,7 +484,7 @@
                                                                                         work at this time</p>
                                                                                 @endif
                                                                                 {{-- <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p> --}}
-                                                                        </div>
+                                                                        {{--</div>
                                                                         @if (!$submitted)
                                                                             <button type="submit"
                                                                                 class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full">Submit</button>
@@ -494,9 +494,9 @@
                                                                                 disabled>Submit</button>
                                                                         @endif
 
-                                                                        <p></p>
-                                                                        </form>
-                                                                        @foreach ($student_file as $student_files)
+                                                                       
+                                                                        </form>--}}
+                                                                        {{-- @foreach ($student_file as $student_files)
                                                                             @if ($student_files->classwork_id === $content['content_id'] && $student_files->student_id === Auth::id())
                                                                                 @foreach ($solution as $solutions)
                                                                                     @if ($solutions->classwork_id === $content['content_id'])
@@ -522,13 +522,40 @@
                                                                                     @endif
                                                                                 @endforeach
                                                                             @endif
-                                                                        @endforeach
-                                                                        <div class="flex justify-end mt-4">
-
-                                                                        </div>
+                                                                        @endforeach --}}
+                                                                        
                                                                     @endif
                                                                 @endif
                                                             @endforeach
+                                                            @if ($content['type_of_classwork'] === "Assignment")
+                                                                <div class="container mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-6">Answer the Assignment</h2>
+    
+    <form action="{{ route('student.assignment.submit', $content['content_id']) }}" method="POST">
+        @csrf
+        
+        @foreach($questions as $questionIndex => $question)
+        @if ($content['content_id'] === $question->classwork_id)
+            <div class="mb-6">
+                <p class="text-xl font-semibold">{{ $question->text }}</p>
+                
+                @foreach($question->choices as $choiceIndex => $choice)
+                    <div class="flex items-center my-2">
+                        <input type="radio" name="answers[{{ $question->id }}]" id="choice_{{ $choice->id }}" value="{{ $choice->id }}" required>
+                        <label for="choice_{{ $choice->id }}" class="ml-2">{{ $choice->text }}</label>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+            
+        @endforeach
+        
+        <div class="mt-8">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Submit Answers</button>
+        </div>
+    </form>
+</div>
+                                                            @endif
                                                         @endif
                                                         @if ($content['type_of_classwork'] === 'Practice Problem')
                                                             <button type="submit"

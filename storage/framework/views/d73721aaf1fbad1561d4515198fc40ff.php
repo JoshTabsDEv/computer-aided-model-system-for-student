@@ -359,53 +359,7 @@
                                                             <?php $__currentLoopData = $file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <?php if($content['content_id'] === $files->classwork_id): ?>
                                                                     <?php if($content['type_of_classwork'] != 'Practice Problem'): ?>
-                                                                        <li
-                                                                            class="mb-2 flex items-center border rounded p-2">
-                                                                            <img src="<?php echo e(route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg'])); ?>"
-                                                                                alt="<?php echo e($files->classwork_file); ?>"
-                                                                                class="w-16 h-16 object-cover mr-3">
-                                                                            <div x-cloak x-data="{ showModal1: false, contentId: <?php echo e($content['content_id']); ?> }">
-                                                                                <a @click="showModal1 = true"
-                                                                                    class="text-blue-500 hover:underline"><?php echo e($files->classwork_file); ?></a>
-                                                                                <div class="text-gray-500 text-sm">
-                                                                                    <?php echo e(strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION))); ?>
-
-                                                                                </div>
-                                                                                <div x-show="showModal1" x-cloak
-                                                                                    x-transition:enter="transition ease-out duration-300"
-                                                                                    x-transition:enter-start="opacity-0 transform scale-95"
-                                                                                    x-transition:enter-end="opacity-100 transform scale-100"
-                                                                                    x-transition:leave="transition ease-in duration-200"
-                                                                                    x-transition:leave-start="opacity-100 transform scale-100"
-                                                                                    x-transition:leave-end="opacity-0 transform scale-95"
-                                                                                    @click.away="showModal = false"
-                                                                                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-
-                                                                                    <iframe frameborder="0"
-                                                                                        src="<?php echo e(route('student.classroom.files.show', ['id' => $files->id])); ?>#toolbar=0&scrollbar=10&view=FitH"
-                                                                                        width="600" height="800"
-                                                                                        style=" overflow: auto;"></iframe>
-                                                                                    <div
-                                                                                        class="fixed top-0 right-0 m-4">
-                                                                                        <button
-                                                                                            class="close-btn flex items-center justify-center rounded-full"
-                                                                                            @click="showModal1 = false">
-                                                                                            <svg class="w-6 h-6 text-white"
-                                                                                                fill="none"
-                                                                                                stroke="currentColor"
-                                                                                                viewBox="0 0 24 24"
-                                                                                                xmlns="http://www.w3.org/2000/svg">
-                                                                                                <path
-                                                                                                    stroke-linecap="round"
-                                                                                                    stroke-linejoin="round"
-                                                                                                    stroke-width="2"
-                                                                                                    d="M6 18L18 6M6 6l12 12">
-                                                                                                </path>
-                                                                                            </svg>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div>
-                                                                        </li>
+                                                                        
                                                                     <?php endif; ?>
 
                                                                     <?php
@@ -423,143 +377,42 @@
                                                                         
                                                                         
                                                                     <?php else: ?>
-                                                                        <div
-                                                                            class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">
-                                                                            <?php echo e($content['deadline']); ?></div>
-                                                                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                                                                            <div
-                                                                                class="flex justify-between items-center mb-4">
-                                                                                <h3 class="text-lg font-semibold">Your
-                                                                                    work</h3>
-                                                                                <?php
-                                                                                    $submitted = $student_file
-                                                                                        ->where(
-                                                                                            'classwork_id',
-                                                                                            $content['content_id'],
-                                                                                        )
-                                                                                        ->where(
-                                                                                            'student_id',
-                                                                                            Auth::id(),
-                                                                                        )
-                                                                                        ->isNotEmpty();
-                                                                                ?>
-                                                                                <?php if(Carbon\Carbon::parse($content['deadline_timestamp'])->isPast() && !$submitted): ?>
-                                                                                    <span class="text-red-600">
-                                                                                        Missing
-                                                                                    </span>
-                                                                                <?php elseif(!$submitted): ?>
-                                                                                    <span class="text-green-600">
-                                                                                        Assigned
-                                                                                    </span>
-                                                                                <?php else: ?>
-                                                                                    <span class="text-blue-600">
-                                                                                        Submitted
-                                                                                    </span>
-                                                                                <?php endif; ?>
-
-                                                                            </div>
-                                                                            <form
-                                                                                action="<?php echo e(route('student.student.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classwork_id' => $content['content_id']])); ?>"
-                                                                                method="POST"
-                                                                                enctype="multipart/form-data">
-                                                                                <?php echo csrf_field(); ?>
-                                                                                <?php if(!$submitted): ?>
-                                                                                    <div
-                                                                                        class="flex justify-between items-center">
-                                                                                        <input id="files"
-                                                                                            type="file"
-                                                                                            name="files[]"class="block w-full text-sm text-gray-500
-                                                                                                file:me-4 file:py-2 file:px-4
-                                                                                                file:rounded-lg file:border-0
-                                                                                                file:text-sm file:font-semibold
-                                                                                                file:bg-blue-600 file:text-white
-                                                                                                hover:file:bg-blue-700
-                                                                                                file:disabled:opacity-50 file:disabled:pointer-events-none
-                                                                                                dark:text-neutral-500
-                                                                                                dark:file:bg-blue-500
-                                                                                                dark:hover:file:bg-blue-400
-                                                                                                file:before:content-['Add_or_Create']
-                                                                                                " multiple
-                                                                                            onchange="displaySelectedFiles(this)
-                                                                                                ">
-
-                                                                                    </div>
-                                                                                <?php else: ?>
-                                                                                    <div
-                                                                                        class="flex justify-between items-center">
-                                                                                        <input id="files"
-                                                                                            type="file"
-                                                                                            name="files[]"class="block w-full text-sm text-gray-500
-                                                                                            file:me-4 file:py-2 file:px-4
-                                                                                            file:rounded-lg file:border-0
-                                                                                            file:text-sm file:font-semibold
-                                                                                            file:bg-blue-600 file:text-white
-                                                                                            hover:file:bg-blue-700
-                                                                                            file:disabled:opacity-50 file:disabled:pointer-events-none
-                                                                                            dark:text-neutral-500
-                                                                                            dark:file:bg-blue-500
-                                                                                            dark:hover:file:bg-blue-400
-                                                                                            file:before:content-['Add_or_Create']
-                                                                                            " multiple
-                                                                                            onchange="displaySelectedFiles(this)
-                                                                                            "
-                                                                                            disabled required>
-                                                                                    </div>
-                                                                                <?php endif; ?>
-
-                                                                                <?php if(Carbon\Carbon::parse($content['deadline_timestamp'])->isPast()): ?>
-                                                                                    <p
-                                                                                        class="text-sm text-gray-500 mt-2">
-                                                                                        Your teacher is not accepting
-                                                                                        work at this time</p>
-                                                                                <?php endif; ?>
-                                                                                
-                                                                        </div>
-                                                                        <?php if(!$submitted): ?>
-                                                                            <button type="submit"
-                                                                                class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full">Submit</button>
-                                                                        <?php else: ?>
-                                                                            <button type="submit"
-                                                                                class="px-4 py-2 mt-5 bg-gray-300 text-black-500 rounded-md w-full"
-                                                                                disabled>Submit</button>
-                                                                        <?php endif; ?>
-
-                                                                        <p></p>
-                                                                        </form>
-                                                                        <?php $__currentLoopData = $student_file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student_files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                            <?php if($student_files->classwork_id === $content['content_id'] && $student_files->student_id === Auth::id()): ?>
-                                                                                <?php $__currentLoopData = $solution; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $solutions): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                                    <?php if($solutions->classwork_id === $content['content_id']): ?>
-                                                                                        <div
-                                                                                            class="mt-4 p-4 bg-gray-100 rounded-lg">
-                                                                                            <div
-                                                                                                class="mt-4 p-4 bg-green-100 rounded-lg">
-                                                                                                <h3
-                                                                                                    class="text-lg font-semibold">
-                                                                                                    Solution</h3>
-
-                                                                                                <li
-                                                                                                    class="mb-2 flex items-center border rounded p-2">
-                                                                                                    <a href="<?php echo e(route('student.solutions.show', $solutions->id)); ?>"
-                                                                                                        class="text-blue-500 hover:underline"><?php echo e(basename($solutions->solution_file)); ?></a>
-                                                                                                    <div
-                                                                                                        class="text-gray-500 text-sm ml-2">
-                                                                                                        <?php echo e(strtoupper(pathinfo($solutions->solution_file, PATHINFO_EXTENSION))); ?>
-
-                                                                                                    </div>
-                                                                                                </li>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    <?php endif; ?>
-                                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                                            <?php endif; ?>
-                                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                                        <div class="flex justify-end mt-4">
-
-                                                                        </div>
+                                                                        
+                                                                        
+                                                                        
+                                                                        
                                                                     <?php endif; ?>
                                                                 <?php endif; ?>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php if($content['type_of_classwork'] === "Assignment"): ?>
+                                                                <div class="container mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-6">Answer the Assignment</h2>
+    
+    <form action="<?php echo e(route('student.assignment.submit', $content['content_id'])); ?>" method="POST">
+        <?php echo csrf_field(); ?>
+        
+        <?php $__currentLoopData = $questions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $questionIndex => $question): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <?php if($content['content_id'] === $question->classwork_id): ?>
+            <div class="mb-6">
+                <p class="text-xl font-semibold"><?php echo e($question->text); ?></p>
+                
+                <?php $__currentLoopData = $question->choices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $choiceIndex => $choice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="flex items-center my-2">
+                        <input type="radio" name="answers[<?php echo e($question->id); ?>]" id="choice_<?php echo e($choice->id); ?>" value="<?php echo e($choice->id); ?>" required>
+                        <label for="choice_<?php echo e($choice->id); ?>" class="ml-2"><?php echo e($choice->text); ?></label>
+                    </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
+        <?php endif; ?>
+            
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        
+        <div class="mt-8">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Submit Answers</button>
+        </div>
+    </form>
+</div>
+                                                            <?php endif; ?>
                                                         <?php endif; ?>
                                                         <?php if($content['type_of_classwork'] === 'Practice Problem'): ?>
                                                             <button type="submit"
