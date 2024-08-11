@@ -12,9 +12,11 @@ use App\Models\AssignCourseAnnouncement;
 use App\Models\CourseContentClasswork;
 use App\Models\StudentByCourse;
 use App\Models\StudentClasswork;
+use App\Models\StudentScore;
 use App\Models\SubClasswork;
 use App\Models\Solution;
 use App\Models\Question;
+use App\Models\Answer;
 use App\Models\Choice;
 use App\Models\CourseClassworkFiles;
 use Illuminate\Support\Facades\Storage;
@@ -55,10 +57,13 @@ class StudentCourseController extends Controller
 
         $classwork_files = CourseClassworkFiles::all();
         $solution_files = Solution::all();
+        
         $question_files = Question::all();
         $student_classwork = StudentClasswork::where('course_assignment_id', $assignmentTableID)
             ->get();
 
+      
+          $userAnswers = Answer::where('student_id', auth()->id())->pluck('choice_id', 'question_id'); // Fetch user answers
 
 
         $announcementsByAssignment = [];
@@ -95,6 +100,14 @@ class StudentCourseController extends Controller
                 ];
             }
         }
+        $questions = Question::with('choices')->get();
+        $correctAnswers = []; // Array to store correct answers by question ID
+        foreach ($questions as $question) {
+            $correctAnswer = $question->choices->where('is_correct', true)->first();
+            if ($correctAnswer) {
+                $correctAnswers[$question->id] = $correctAnswer->id;
+            }
+        }
 
         $currentTime = Carbon::now();
 
@@ -105,10 +118,12 @@ class StudentCourseController extends Controller
             'classworkByAssignment' => $classworkByAssignment,
             'enrolledStudent' => $enrolledStudent,
             'student_file' => $student_classwork,
+            'correctAnswers' => $correctAnswers,
             'file' => $classwork_files,
             'solution' => $solution_files,
             'current_time' => $currentTime,
-            'questions' => $question_files
+            'questions' => $question_files,
+            'userAnswers'=>$userAnswers 
         ]);
     }
 
@@ -423,24 +438,62 @@ class StudentCourseController extends Controller
         //
     }
 
-    public function submit(Request $request, $assignmentId)
+    public function submit(Request $request,$userID,$assignmentTableID, $courseID, $classworkID)
 {
     $answers = $request->input('answers');
 
+   
+
     $score = 0;
+     $totalScore =0;
 
     // Loop through the student's answers and calculate the score
     foreach ($answers as $questionId => $choiceId) {
+          $question = Question::find($questionId);
+        $request->validate([
+        'answers.*' => 'required|integer|exists:choices,id',
+        ]);
+        $totalScore += $question->choices()->where('is_correct', true)->count();
+        $correctAnswer = $question->choices->where('is_correct', true)->first();
+
         $choice = Choice::find($choiceId);
+         $answers = $request->input('answers');
+         foreach ($request->input('answers') as $questionId => $choiceId) {
+            Answer::updateOrCreate(
+                
+            [ 'question_id' => $questionId,'student_id' => auth()->user()->id, 'choice_id'=> $choiceId]
+        );
+    }
+
+        
+
+   
+        if ($correctAnswer) {
+        $correctAnswers[$question->id] = $correctAnswer->id;
+    }
         
         if ($choice->is_correct) {
             $score++;
         }
     }
 
+    // Save the scores to the database
+    StudentScore::create([
+        'classwork_id' => $classworkID,
+        'student_id' => auth()->user()->id, // Assuming the student is authenticated
+        'total_score' => $totalScore,
+        'score' => $score,
+    ]);
     // Save the student's score or do any additional processing here
 
     // Redirect back with the score
-    return redirect()->route('student.assignment.show', $assignmentId)->with('success', 'Assignment submitted successfully!')->with('score', $score);
+    
+     return redirect()->route('student.student.index', [
+            'userID' => $userID,
+            'assignmentTableID' => $assignmentTableID,
+            'courseID' => $courseID,
+            'correctAnswers' => $correctAnswer,
+        ])->with('success', 'Assignment submitted successfully!')
+        ->withInput()   ;
 }
 }

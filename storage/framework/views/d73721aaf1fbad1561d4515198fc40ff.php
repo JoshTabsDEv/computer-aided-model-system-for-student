@@ -331,7 +331,7 @@
                                                     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
 
                                                     <div
-                                                        class="bg-white p-6 rounded-lg shadow-lg -mt-32 max-w-xl w-full mt-5 relative">
+                                                        class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-full overflow-y-auto z-50 relative">
                                                         <?php if($type === 'Classwork'): ?>
                                                             <button @click="showModal = false"
                                                                 id="closeClassworkModal"
@@ -362,15 +362,7 @@
                                                                         
                                                                     <?php endif; ?>
 
-                                                                    <?php
-                                                                        $submitted = $student_file
-                                                                            ->where(
-                                                                                'classwork_id',
-                                                                                $content['content_id'],
-                                                                            )
-                                                                            ->where('student_id', Auth::id())
-                                                                            ->isNotEmpty();
-                                                                    ?>
+                                                                    
                                                                     <?php if($content['type_of_classwork'] === 'Practice Problem'): ?>
                                                                         
 
@@ -380,38 +372,113 @@
                                                                         
                                                                         
                                                                         
-                                                                        
                                                                     <?php endif; ?>
                                                                 <?php endif; ?>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                            <?php if($content['type_of_classwork'] === "Assignment"): ?>
-                                                                <div class="container mx-auto p-6">
-    <h2 class="text-2xl font-bold mb-6">Answer the Assignment</h2>
+                                                            <?php
+                                                                        $submitted1 = \App\Models\StudentScore::where(
+                                                                            'classwork_id',
+                                                                            $content['content_id'],
+                                                                        )
+                                                                            ->where('student_id', Auth::id())
+                                                                            ->first();
+                                                                          
+                                                                    ?>
+                                                            <?php if($content['type_of_classwork'] === 'Assignment'): ?>
+                                                                    
+                                                                    
+                                                               
+                                                                    <div class="container mx-auto p-6">
+                                                                        <h2 class="text-2xl font-bold mb-6">Answer the
+                                                                            Assignment</h2>
+
+                                                                        <form action="<?php echo e(route('student.assignment.submit', [
+                                                                            'userID' => auth()->user()->id,
+                                                                            'assignmentTableID' => $manageCourse->id,
+                                                                            'courseID' => $manageCourse->course_id,
+                                                                            'classworkID' => $content['content_id']
+                                                                        ])); ?>" method="POST">
+                                                                            <?php echo csrf_field(); ?>
+                                                                                    <?php
+                                                                                        $num=0;
+                                                                                        $score = \App\Models\StudentScore::where('classwork_id',
+                                                                                            $content['content_id'],
+                                                                                        )
+                                                                                            ->where('student_id', Auth::id())
+                                                                                            ->first();
+                                                                                    ?>
+                                                                                    <div class="w-80 bg-white p-6 rounded-md  flex flex-col items-end w-full">
+                                                                                        <h2 class="text-xl font-semibold mb-4 text-right">Your Score</h2>
+                                                                                        <p class="text-4xl font-bold text-blue-600 text-right">
+                                                                                             <?php if($score): ?>
+                                                                                                <?php echo e($score->score); ?>/<?php echo e($score->total_score); ?>
+
+                                                                                            <?php endif; ?>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                   
+                                                                            <?php $__currentLoopData = $questions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $questionIndex => $question): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                                    
+                                                                                <?php if($content['content_id'] === $question->classwork_id): ?>
+                                                                                <?php
     
-    <form action="<?php echo e(route('student.assignment.submit', $content['content_id'])); ?>" method="POST">
-        <?php echo csrf_field(); ?>
-        
-        <?php $__currentLoopData = $questions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $questionIndex => $question): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <?php if($content['content_id'] === $question->classwork_id): ?>
-            <div class="mb-6">
-                <p class="text-xl font-semibold"><?php echo e($question->text); ?></p>
-                
-                <?php $__currentLoopData = $question->choices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $choiceIndex => $choice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="flex items-center my-2">
-                        <input type="radio" name="answers[<?php echo e($question->id); ?>]" id="choice_<?php echo e($choice->id); ?>" value="<?php echo e($choice->id); ?>" required>
-                        <label for="choice_<?php echo e($choice->id); ?>" class="ml-2"><?php echo e($choice->text); ?></label>
-                    </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </div>
-        <?php endif; ?>
-            
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        
-        <div class="mt-8">
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Submit Answers</button>
-        </div>
-    </form>
-</div>
+                                                                                    
+                                                                                    $num++;
+                                                                                    ?>
+                                                                                    <div class="mb-6">
+                                                                                        <p class="text-xl font-semibold">
+                                                                                            <?php echo e($num); ?>. <?php echo e($question->text); ?>
+
+                                                                                        </p>
+
+                                                                                         <?php $__currentLoopData = $question->choices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $choiceIndex => $choice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                                            <?php
+                                                                                                $isUserAnswer = isset($userAnswers[$question->id]) && $userAnswers[$question->id] == $choice->id;
+                                                                                                $isCorrectAnswer = isset($correctAnswers[$question->id]) && $correctAnswers[$question->id] == $choice->id;
+                                                                                                $showAnswer = $isUserAnswer && !$isCorrectAnswer;
+                                                                                                
+                                                                                            ?>
+                                                                                            <div class="flex items-center my-2">
+                                                                                                <input type="radio"
+                                                                                                    name="answers[<?php echo e($question->id); ?>]"
+                                                                                                    id="choice_<?php echo e($choice->id); ?>"
+                                                                                                    value="<?php echo e($choice->id); ?>"
+                                                                                                    <?php if($submitted1): ?>
+                                                                                                        <?php echo e($isUserAnswer ? 'checked' : ''); ?>
+
+                                                                                                    disabled>
+                                                                                                    <?php endif; ?>
+                                                                                                   
+                                                                                                <label for="choice_<?php echo e($choice->id); ?>" class="ml-2 <?php echo e($showAnswer ? 'text-red-600' : ''); ?>">
+                                                                                                    <?php echo e($choice->text); ?>
+
+                                                                                                    <?php if($submitted1): ?>
+                                                                                                         
+                                                                                                    <?php if($isCorrectAnswer): ?>
+                                                                                                        <span class="text-sm text-green-600">(Correct)</span>
+                                                                                                    
+                                                                                                    <?php endif; ?>
+                                                                                                    <?php endif; ?>
+                                                                                                   
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                                    </div>
+                                                                                <?php endif; ?>
+                                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                            
+                                                                            <div class="mt-8">
+                                                                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full"
+                                                                                <?php if($submitted1): ?>
+                                                                                    disabled
+                                                                                <?php endif; ?>
+                                                                                >
+                                                                                    Submit Answers
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                               
                                                             <?php endif; ?>
                                                         <?php endif; ?>
                                                         <?php if($content['type_of_classwork'] === 'Practice Problem'): ?>

@@ -234,7 +234,7 @@
                                                     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
 
                                                     <div
-                                                        class="bg-white p-6 rounded-lg shadow-lg -mt-32 max-w-xl w-full mt-5 relative">
+                                                        class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-full overflow-y-auto z-50 relative">
                                                         @if ($type === 'Classwork')
                                                             <button @click="showModal = false"
                                                                 id="closeClassworkModal"
@@ -309,15 +309,7 @@
                                                                         </li> --}}
                                                                     @endif
 
-                                                                    @php
-                                                                        $submitted = $student_file
-                                                                            ->where(
-                                                                                'classwork_id',
-                                                                                $content['content_id'],
-                                                                            )
-                                                                            ->where('student_id', Auth::id())
-                                                                            ->isNotEmpty();
-                                                                    @endphp
+                                                                    
                                                                     @if ($content['type_of_classwork'] === 'Practice Problem')
                                                                         {{-- <div id="countdown" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4" x-data="{ deadline: new Date('{{ $content['deadline'] }}') }" x-init="setInterval(() => {
                                                                                     let now = new Date().getTime();
@@ -484,7 +476,7 @@
                                                                                         work at this time</p>
                                                                                 @endif
                                                                                 {{-- <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p> --}}
-                                                                        {{--</div>
+                                                                        {{-- </div>
                                                                         @if (!$submitted)
                                                                             <button type="submit"
                                                                                 class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full">Submit</button>
@@ -495,7 +487,7 @@
                                                                         @endif
 
                                                                        
-                                                                        </form>--}}
+                                                                        </form> --}}
                                                                         {{-- @foreach ($student_file as $student_files)
                                                                             @if ($student_files->classwork_id === $content['content_id'] && $student_files->student_id === Auth::id())
                                                                                 @foreach ($solution as $solutions)
@@ -523,38 +515,109 @@
                                                                                 @endforeach
                                                                             @endif
                                                                         @endforeach --}}
-                                                                        
                                                                     @endif
                                                                 @endif
                                                             @endforeach
-                                                            @if ($content['type_of_classwork'] === "Assignment")
-                                                                <div class="container mx-auto p-6">
-    <h2 class="text-2xl font-bold mb-6">Answer the Assignment</h2>
+                                                            @php
+                                                                        $submitted1 = \App\Models\StudentScore::where(
+                                                                            'classwork_id',
+                                                                            $content['content_id'],
+                                                                        )
+                                                                            ->where('student_id', Auth::id())
+                                                                            ->first();
+                                                                          
+                                                                    @endphp
+                                                            @if ($content['type_of_classwork'] === 'Assignment')
+                                                                    
+                                                                    
+                                                               
+                                                                    <div class="container mx-auto p-6">
+                                                                        <h2 class="text-2xl font-bold mb-6">Answer the
+                                                                            Assignment</h2>
+
+                                                                        <form action="{{ route('student.assignment.submit', [
+                                                                            'userID' => auth()->user()->id,
+                                                                            'assignmentTableID' => $manageCourse->id,
+                                                                            'courseID' => $manageCourse->course_id,
+                                                                            'classworkID' => $content['content_id']
+                                                                        ]) }}" method="POST">
+                                                                            @csrf
+                                                                                    @php
+                                                                                        $num=0;
+                                                                                        $score = \App\Models\StudentScore::where('classwork_id',
+                                                                                            $content['content_id'],
+                                                                                        )
+                                                                                            ->where('student_id', Auth::id())
+                                                                                            ->first();
+                                                                                    @endphp
+                                                                                    <div class="w-80 bg-white p-6 rounded-md  flex flex-col items-end w-full">
+                                                                                        <h2 class="text-xl font-semibold mb-4 text-right">Your Score</h2>
+                                                                                        <p class="text-4xl font-bold text-blue-600 text-right">
+                                                                                             @if ($score)
+                                                                                                {{ $score->score }}/{{$score->total_score}}
+                                                                                            @endif
+                                                                                        </p>
+                                                                                    </div>
+                                                                                   
+                                                                            @foreach ($questions as $questionIndex => $question)
+                                                                                    
+                                                                                @if ($content['content_id'] === $question->classwork_id)
+                                                                                @php
     
-    <form action="{{ route('student.assignment.submit', $content['content_id']) }}" method="POST">
-        @csrf
-        
-        @foreach($questions as $questionIndex => $question)
-        @if ($content['content_id'] === $question->classwork_id)
-            <div class="mb-6">
-                <p class="text-xl font-semibold">{{ $question->text }}</p>
-                
-                @foreach($question->choices as $choiceIndex => $choice)
-                    <div class="flex items-center my-2">
-                        <input type="radio" name="answers[{{ $question->id }}]" id="choice_{{ $choice->id }}" value="{{ $choice->id }}" required>
-                        <label for="choice_{{ $choice->id }}" class="ml-2">{{ $choice->text }}</label>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-            
-        @endforeach
-        
-        <div class="mt-8">
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Submit Answers</button>
-        </div>
-    </form>
-</div>
+                                                                                    
+                                                                                    $num++;
+                                                                                    @endphp
+                                                                                    <div class="mb-6">
+                                                                                        <p class="text-xl font-semibold">
+                                                                                            {{ $num }}. {{ $question->text }}
+                                                                                        </p>
+
+                                                                                         @foreach ($question->choices as $choiceIndex => $choice)
+                                                                                            @php
+                                                                                                $isUserAnswer = isset($userAnswers[$question->id]) && $userAnswers[$question->id] == $choice->id;
+                                                                                                $isCorrectAnswer = isset($correctAnswers[$question->id]) && $correctAnswers[$question->id] == $choice->id;
+                                                                                                $showAnswer = $isUserAnswer && !$isCorrectAnswer;
+                                                                                                
+                                                                                            @endphp
+                                                                                            <div class="flex items-center my-2">
+                                                                                                <input type="radio"
+                                                                                                    name="answers[{{ $question->id }}]"
+                                                                                                    id="choice_{{ $choice->id }}"
+                                                                                                    value="{{ $choice->id }}"
+                                                                                                    @if ($submitted1)
+                                                                                                        {{ $isUserAnswer ? 'checked' : '' }}
+                                                                                                    disabled>
+                                                                                                    @endif
+                                                                                                   
+                                                                                                <label for="choice_{{ $choice->id }}" class="ml-2 {{ $showAnswer ? 'text-red-600' : '' }}">
+                                                                                                    {{ $choice->text }}
+                                                                                                    @if ($submitted1)
+                                                                                                         
+                                                                                                    @if ($isCorrectAnswer)
+                                                                                                        <span class="text-sm text-green-600">(Correct)</span>
+                                                                                                    
+                                                                                                    @endif
+                                                                                                    @endif
+                                                                                                   
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        @endforeach
+                                                                                    </div>
+                                                                                @endif
+                                                                            @endforeach
+                                                                            
+                                                                            <div class="mt-8">
+                                                                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full"
+                                                                                @if ($submitted1)
+                                                                                    disabled
+                                                                                @endif
+                                                                                >
+                                                                                    Submit Answers
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                               
                                                             @endif
                                                         @endif
                                                         @if ($content['type_of_classwork'] === 'Practice Problem')

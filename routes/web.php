@@ -135,7 +135,7 @@ Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
     Route::put('/update-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'updateAnnouncement'])
     ->name('teacher.updateAnnouncement'); //update announcement
 
-    Route::post('/assignments/{assignmentId}/submit', [StudentCourseController::class, 'submit'])->name('assignment.submit');
+    Route::post('/assignments/{userID}/{assignmentTableID}/{courseID}/{classworkID}/submit', [StudentCourseController::class, 'submit'])->name('assignment.submit');
 
     // Route::get('/manage-classwork/{userID}/{assignmentTableID}/{courseID}', [ManageClassworkController::class, 'index'])
     // ->name('classwork.index');
