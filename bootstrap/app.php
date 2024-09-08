@@ -3,6 +3,7 @@
 use App\Http\Middleware\preventBackCaching;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RedirectToLogin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,10 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware -> append(preventBackCaching::class);
+         $middleware->append(RedirectToLogin::class);
         $middleware->alias([
             'guest' => RedirectIfAuthenticated::class,
             'auth' => Authenticate::class
         ]);
+
+    
 
         
     })

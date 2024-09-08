@@ -44,7 +44,8 @@
         </div>
         @foreach ($classworkByAssignment as $contentItems)
             @foreach ($contentItems as $content )
-            <div class="flex bg-white w-full h-20 rounded-[5px] p-4 mt-2">
+            @if ($content['type_of_classwork'] === 'Assignment')
+                <div class="flex bg-white w-full h-20 rounded-[5px] p-4 mt-2">
                 <div class="flex items-center">
                     <img src="{{ Auth::user()->teacher_photo && Storage::exists('public/teacher_photos/' . Auth::user()->teacher_photo) ? asset('storage/teacher_photos/' . Auth::user()->teacher_photo) : asset('assets/img/user.png') }}" class="shadow-xl border-[.1px] border-gray-500 rounded-full w-9 object-contain mx-auto">
                 </div>
@@ -74,15 +75,34 @@
                                     <h2 class="text-xl font-semibold text-black">Students</h2>
                                 </div>
                                 <div class="max-h-96 overflow-y-auto">
+                                @php
+                                  
+                                @endphp
                                     @foreach ($enrolledStudent->sortBy('courseStudent.name') as $enrolledStudents)
-                                        @if ($enrolledStudents->classwork_id === $manageCourse->classwork_id)
+                                        
+
+                                        @php
+                                        $studentScore = \App\Models\StudentScore::where('student_id',$enrolledStudents->courseStudent->id)
+                                        ->where('classwork_id',$content['content_id'])
+                                        ->first();
+                                        @endphp
                                         <div class="p-2 rounded h-auto text-lg bg-white">
                                             <div class="p-4 flex items-center justify-between">
                                                 <img src="{{asset('assets/img/user.png')}}" alt="Student" class="w-12 h-12 rounded-full mr-4">
                                                 <p class="text-base font-medium text-gray-800 text-center">{{ $enrolledStudents->courseStudent->name }}</p>
-                                                <div x-cloak x-data="{ showModalView: false, studentId: {{ $enrolledStudents->courseStudent->id }} }">
-                                                    <div class="p-3 w-28 ml-3 mr-3 text-sm text-center text-gray-500 border rounded-md cursor-pointer border-gray-400 hover:border-blue-500 hover:text-black"
-                                                    @click="showModalView = true; viewFiles({{ $enrolledStudents->courseStudent->id }})">View Work</div>
+                                                    @if ($studentScore)
+                                                        @if ($studentScore->classwork_id === $content['content_id'])
+                                                            <div class="p-3 w-28 ml-3 mr-3 text-sm text-center text-gray-500 border rounded-md cursor-pointer border-gray-400 hover:border-blue-500 hover:text-black"
+                                                        >{{$studentScore->score}}/{{$studentScore->total_score}}</div> 
+                                                        @endif
+                                                    @else
+                                                     <div class="p-3 w-28 ml-3 mr-3 text-sm text-center text-gray-500 border rounded-md cursor-pointer border-gray-400 hover:border-blue-500 hover:text-black"
+                                                        >None</div>    
+                                                    @endif
+                                                   
+                                                     
+                                                    
+                                                   
 
                                                     <!-- Modal for View -->
                                                     <div x-show="showModalView" x-cloak
@@ -120,11 +140,8 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
                                             </div>
-                                        </div>
-                                        @endif
-                                            
+                                        </div>     
                                     @endforeach
                                 </div>
                                 <div class="flex justify-end mt-4">
@@ -138,6 +155,8 @@
                     </div>
                 </div>
             </div>
+            @endif
+            
             @endforeach
          @endforeach
     </x-teacher.section-div-style>

@@ -185,6 +185,7 @@
                             </form>
                         </div>
                     </div>
+
                     @if (count($announcementsByAssignment) > 0 || count($classworkByAssignment) > 0)
                         @foreach (['Announcement' => $announcementsByAssignment, 'Classwork' => $classworkByAssignment] as $type => $items)
                             @foreach ($items as $contentId => $contentItems)
@@ -237,8 +238,9 @@
                                                         class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-full overflow-y-auto z-50 relative">
                                                         @if ($type === 'Classwork')
                                                             <button @click="showModal = false"
-                                                                id="closeClassworkModal"
-                                                                class="absolute top-0 right-0 m-2 text-lg text-black">X</button>
+                                                            id="closeClassworkModal"
+                                                            class="absolute top-0 right-0 m-2 text-lg text-black">X</button>
+
                                                         @endif
 
                                                         <div x-cloak
@@ -308,324 +310,254 @@
                                                                                 </div>
                                                                         </li> --}}
                                                                     @endif
-
-                                                                    
-                                                                    @if ($content['type_of_classwork'] === 'Practice Problem')
-                                                                        {{-- <div id="countdown" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4" x-data="{ deadline: new Date('{{ $content['deadline'] }}') }" x-init="setInterval(() => {
-                                                                                    let now = new Date().getTime();
-                                                                                    let distance = deadline - now;
-                                                                                    if (distance < 0) {
-                                                                                       
-                                                                                    } else {
-                                                                                        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                                                                                        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                                                                        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                                                                                        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                                                                                        document.getElementById('countdown').innerHTML = days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's ';
-                                                                                    }
-                                                                                }, 1000)">
-                                                                                </div> --}}
-
-                                                                        {{-- @if (!$submitted)
-
-                                                                                <template x-if="showModal">
-                                                                                    <div id="countdown{{$content['content_id']}}" class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4"   x-show="showModal" x-data="{ timer: 3600, interval: null, expired: false }" x-init="
-                                                                                    interval = setInterval(() => {
-                                                                                        if (timer > 0) {
-                                                                                            timer--;
-                                                                                            let hours = Math.floor(timer / 3600);
-                                                                                            let minutes = Math.floor((timer % 3600) / 60);
-                                                                                            let seconds = Math.floor(timer % 60);
-                                                                                            document.getElementById('countdown{{$content['content_id']}}').innerHTML = hours + 'h ' + minutes + 'm ' + seconds + 's ';
-                                                                                        } else {
-                                                                                            clearInterval(interval);
-                                                                                            expired = true;
-                                                                                            document.getElementById('countdown{{$content['content_id']}}').innerHTML = 'Time\'s up!';
-                
-                                                                                            updateStatusToMissing({{ $content['content_id'] }});
-                                                                                        }
-                                                                                    }, 1000);
-                                                                                ">
-                                                                                </div>
-                                                                                </template>
-
-                                                                                {{-- <div x-data="{ open: false, timer: 3600, interval: null, expired: false }"
-                                                                                    x-show="showModal"
-                                                                                    @keydown.escape.window="open = false"
-                                                                                    @click.away="open = false"
-                                                                                    x-init="
-                                                                                        $watch('open', value => {
-                                                                                            if (value) {
-                                                                                                startCountdown();
-                                                                                            } else {
-                                                                                                clearInterval(interval);
-                                                                                            }
-                                                                                        });
-
-                                                                                        function startCountdown() {
-                                                                                            interval = setInterval(() => {
-                                                                                                if (timer > 0) {
-                                                                                                    timer--;
-                                                                                                    let hours = Math.floor(timer / 3600);
-                                                                                                    let minutes = Math.floor((timer % 3600) / 60);
-                                                                                                    let seconds = Math.floor(timer % 60);
-                                                                                                    $el.querySelector('#countdown').innerHTML = hours + 'h ' + minutes + 'm ' + seconds + 's ';
-                                                                                                } else {
-                                                                                                    clearInterval(interval);
-                                                                                                    expired = true;
-                                                                                                    $el.querySelector('#countdown').innerHTML = 'Time\'s up!';
-                                                                                                    updateStatusToMissing({{ $content['content_id'] }});
-                                                                                                }
-                                                                                            }, 1000);
-                                                                                        }
-                                                                                    "
-                                                                                    class="modal">
-                                                                                    </div> --}}
-                                                                        {{-- @else
-                                                                                
-                                                                                @endif --}}
-                                                                    @else
-                                                                        {{-- <div
-                                                                            class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">
-                                                                            {{ $content['deadline'] }}</div>
-                                                                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
-                                                                            <div
-                                                                                class="flex justify-between items-center mb-4">
-                                                                                <h3 class="text-lg font-semibold">Your
-                                                                                    work</h3>
-                                                                                @php
-                                                                                    $submitted = $student_file
-                                                                                        ->where(
-                                                                                            'classwork_id',
-                                                                                            $content['content_id'],
-                                                                                        )
-                                                                                        ->where(
-                                                                                            'student_id',
-                                                                                            Auth::id(),
-                                                                                        )
-                                                                                        ->isNotEmpty();
-                                                                                @endphp
-                                                                                @if (Carbon\Carbon::parse($content['deadline_timestamp'])->isPast() && !$submitted)
-                                                                                    <span class="text-red-600">
-                                                                                        Missing
-                                                                                    </span>
-                                                                                @elseif(!$submitted)
-                                                                                    <span class="text-green-600">
-                                                                                        Assigned
-                                                                                    </span>
-                                                                                @else
-                                                                                    <span class="text-blue-600">
-                                                                                        Submitted
-                                                                                    </span>
-                                                                                @endif
-
-                                                                            </div>
-                                                                            <form
-                                                                                action="{{ route('student.student.postClasswork', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classwork_id' => $content['content_id']]) }}"
-                                                                                method="POST"
-                                                                                enctype="multipart/form-data">
-                                                                                @csrf
-                                                                                @if (!$submitted)
-                                                                                    <div
-                                                                                        class="flex justify-between items-center">
-                                                                                        <input id="files"
-                                                                                            type="file"
-                                                                                            name="files[]"class="block w-full text-sm text-gray-500
-                                                                                                file:me-4 file:py-2 file:px-4
-                                                                                                file:rounded-lg file:border-0
-                                                                                                file:text-sm file:font-semibold
-                                                                                                file:bg-blue-600 file:text-white
-                                                                                                hover:file:bg-blue-700
-                                                                                                file:disabled:opacity-50 file:disabled:pointer-events-none
-                                                                                                dark:text-neutral-500
-                                                                                                dark:file:bg-blue-500
-                                                                                                dark:hover:file:bg-blue-400
-                                                                                                file:before:content-['Add_or_Create']
-                                                                                                " multiple
-                                                                                            onchange="displaySelectedFiles(this)
-                                                                                                ">
-
+                                                                   @if ($content['type_of_classwork'] === 'Module')
+                                                                    @foreach ($file as $files)
+                                                                        @if ($content['content_id'] === $files->classwork_id)
+                                                                            <li class="mb-2 flex items-center border rounded p-2">
+                                                                                <img src="{{ route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg']) }}"
+                                                                                    alt="{{ $files->classwork_file }}"
+                                                                                    class="w-16 h-16 object-cover mr-3">
+                                                                                <div x-cloak x-data="{ showModal1: false, contentId: {{ $content['content_id'] }} }">
+                                                                                    <a @click="showModal1 = true"
+                                                                                    class="text-blue-500 hover:underline">{{ $files->classwork_file }}</a>
+                                                                                    <div class="text-gray-500 text-sm">
+                                                                                        {{ strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION)) }}
                                                                                     </div>
-                                                                                @else
-                                                                                    <div
-                                                                                        class="flex justify-between items-center">
-                                                                                        <input id="files"
-                                                                                            type="file"
-                                                                                            name="files[]"class="block w-full text-sm text-gray-500
-                                                                                            file:me-4 file:py-2 file:px-4
-                                                                                            file:rounded-lg file:border-0
-                                                                                            file:text-sm file:font-semibold
-                                                                                            file:bg-blue-600 file:text-white
-                                                                                            hover:file:bg-blue-700
-                                                                                            file:disabled:opacity-50 file:disabled:pointer-events-none
-                                                                                            dark:text-neutral-500
-                                                                                            dark:file:bg-blue-500
-                                                                                            dark:hover:file:bg-blue-400
-                                                                                            file:before:content-['Add_or_Create']
-                                                                                            " multiple
-                                                                                            onchange="displaySelectedFiles(this)
-                                                                                            "
-                                                                                            disabled required>
-                                                                                    </div>
-                                                                                @endif
 
-                                                                                @if (Carbon\Carbon::parse($content['deadline_timestamp'])->isPast())
-                                                                                    <p
-                                                                                        class="text-sm text-gray-500 mt-2">
-                                                                                        Your teacher is not accepting
-                                                                                        work at this time</p>
-                                                                                @endif
-                                                                                {{-- <p class="text-sm text-gray-500 mt-2">Your teacher is not accepting work at this time</p> --}}
-                                                                        {{-- </div>
-                                                                        @if (!$submitted)
-                                                                            <button type="submit"
-                                                                                class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full">Submit</button>
-                                                                        @else
-                                                                            <button type="submit"
-                                                                                class="px-4 py-2 mt-5 bg-gray-300 text-black-500 rounded-md w-full"
-                                                                                disabled>Submit</button>
-                                                                        @endif
+                                                                                    <!-- Modal -->
+                                                                                    <div x-show="showModal1"
+                                                                                        x-cloak
+                                                                                        x-transition:enter="transition ease-out duration-300"
+                                                                                        x-transition:enter-start="opacity-0 transform scale-95"
+                                                                                        x-transition:enter-end="opacity-100 transform scale-100"
+                                                                                        x-transition:leave="transition ease-in duration-200"
+                                                                                        x-transition:leave-start="opacity-100 transform scale-100"
+                                                                                        x-transition:leave-end="opacity-0 transform scale-95"
+                                                                                        @click.away="showModal1 = false"
+                                                                                        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
 
-                                                                       
-                                                                        </form> --}}
-                                                                        {{-- @foreach ($student_file as $student_files)
-                                                                            @if ($student_files->classwork_id === $content['content_id'] && $student_files->student_id === Auth::id())
-                                                                                @foreach ($solution as $solutions)
-                                                                                    @if ($solutions->classwork_id === $content['content_id'])
-                                                                                        <div
-                                                                                            class="mt-4 p-4 bg-gray-100 rounded-lg">
-                                                                                            <div
-                                                                                                class="mt-4 p-4 bg-green-100 rounded-lg">
-                                                                                                <h3
-                                                                                                    class="text-lg font-semibold">
-                                                                                                    Solution</h3>
+                                                                                        <div class="relative bg-white rounded-lg p-4 max-w-full mx-4 sm:mx-8 lg:max-w-5xl lg:mx-auto h-screen overflow-y-auto lg:overflow-hidden">
+                                                                                            <!-- Close Button -->
+                                                                                            <button class="absolute top-4 right-4 z-50 text-gray-600 hover:text-gray-900" @click="showModal1 = false">
+                                                                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                                                        d="M6 18L18 6M6 6l12 12"></path>
+                                                                                                </svg>
+                                                                                            </button>
 
-                                                                                                <li
-                                                                                                    class="mb-2 flex items-center border rounded p-2">
-                                                                                                    <a href="{{ route('student.solutions.show', $solutions->id) }}"
-                                                                                                        class="text-blue-500 hover:underline">{{ basename($solutions->solution_file) }}</a>
-                                                                                                    <div
-                                                                                                        class="text-gray-500 text-sm ml-2">
-                                                                                                        {{ strtoupper(pathinfo($solutions->solution_file, PATHINFO_EXTENSION)) }}
+                                                                                            <!-- Modal Content -->
+                                                                                            <div class="lg:flex lg:space-x-4 h-full">
+                                                                                                <!-- Iframe -->
+                                                                                                <div class="w-full lg:w-1/2 h-full overflow-y-auto">
+                                                                                                    <iframe frameborder="0"
+                                                                                                            src="{{ route('student.classroom.files.show', ['id' => $files->id]) }}#toolbar=0&scrollbar=10&view=FitH"
+                                                                                                            class="w-full h-full"
+                                                                                                            style="overflow: auto;"></iframe>
+                                                                                                </div>
+
+                                                                                                <!-- Form and Graph Area -->
+                                                                                                <div class="w-full lg:w-1/2 lg:pl-4 mt-4 lg:mt-0 flex flex-col">
+                                                                                                    <label for="graphType" class="block mb-2 font-medium text-gray-700">Choose Graph Type:</label>
+                                                                                                    <select id="graphType" class="w-full mb-4 p-2 border border-gray-300 rounded">
+                                                                                                        <option value="parabola">Parabola</option>
+                                                                                                        <option value="line">Line</option>
+                                                                                                        <option value="sine">Sine Wave</option>
+                                                                                                        <option value="circle">Circle</option>
+                                                                                                        <!-- Add more graph types here -->
+                                                                                                    </select>
+
+                                                                                                    <!-- Parameters Section -->
+                                                                                                    <div id="parameters" class="mb-4 space-y-2">
+                                                                                                        <!-- Example fields for parabola -->
+                                                                                                        <label for="a" class="block font-medium text-gray-700">a:</label>
+                                                                                                        <input type="number" id="a" class="w-full p-2 border border-gray-300 rounded" value="1">
+
+                                                                                                        <label for="b" class="block font-medium text-gray-700">b:</label>
+                                                                                                        <input type="number" id="b" class="w-full p-2 border border-gray-300 rounded" value="0">
+
+                                                                                                        <label for="c" class="block font-medium text-gray-700">c:</label>
+                                                                                                        <input type="number" id="c" class="w-full p-2 border border-gray-300 rounded" value="0">
                                                                                                     </div>
-                                                                                                </li>
+
+                                                                                                    <!-- Update Graph Button -->
+                                                                                                    <button id="updateGraph" class="text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 rounded">
+                                                                                                        Update Graph
+                                                                                                    </button>
+
+                                                                                                    <!-- GeoGebra Container -->
+                                                                                                    <div id="geogebra" class="mt-4 w-full flex-grow" style="height: 400px;"></div>
+                                                                                                    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                    @endif
-                                                                                @endforeach
-                                                                            @endif
-                                                                        @endforeach --}}
-                                                                    @endif
+                                                                                    </div>
+
+
+                                                                                </div>
+                                                                            </li>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
+
                                                                 @endif
                                                             @endforeach
                                                             @php
-                                                                        $submitted1 = \App\Models\StudentScore::where(
-                                                                            'classwork_id',
-                                                                            $content['content_id'],
-                                                                        )
-                                                                            ->where('student_id', Auth::id())
-                                                                            ->first();
-                                                                          
-                                                                    @endphp
-                                                            @if ($content['type_of_classwork'] === 'Assignment')
-                                                                    
-                                                                    
-                                                               
-                                                                    <div class="container mx-auto p-6">
-                                                                        <h2 class="text-2xl font-bold mb-6">Answer the
-                                                                            Assignment</h2>
+                                                                $submitted1 = \App\Models\StudentScore::where(
+                                                                    'classwork_id',
+                                                                    $content['content_id'],
+                                                                )
+                                                                    ->where('student_id', Auth::id())
+                                                                    ->first();
 
-                                                                        <form action="{{ route('student.assignment.submit', [
+                                                            @endphp
+                                                            @if ($content['type_of_classwork'] === 'Assignment')
+                                                                <div class="container mx-auto p-6">
+                                                                    <div
+                                                                        class="flex justify-between items-center mb-4">
+                                                                        <h3
+                                                                            class="text-lg font-semibold text-red-500 dark:text-gray-400 mb-4">
+                                                                            {{ $content['deadline'] }}</h3>
+                                                                        @php
+                                                                            $submitted = $student_file
+                                                                                ->where(
+                                                                                    'classwork_id',
+                                                                                    $content['content_id'],
+                                                                                )
+                                                                                ->where('student_id', Auth::id())
+                                                                                ->isNotEmpty();
+                                                                        @endphp
+                                                                        @if (Carbon\Carbon::parse($content['deadline_timestamp'])->isPast() && !$submitted1)
+                                                                            <span class="text-red-600">
+                                                                                Missing
+                                                                            </span>
+                                                                        @elseif(!$submitted1)
+                                                                            <span class="text-green-600">
+                                                                                Assigned
+                                                                            </span>
+                                                                        @else
+                                                                            <span class="text-blue-600">
+                                                                                Submitted
+                                                                            </span>
+                                                                        @endif
+
+                                                                    </div>
+                                                                    <h2 class="text-2xl font-bold mb-6">Answer the
+                                                                        Assignment</h2>
+
+                                                                    <form
+                                                                        action="{{ route('student.assignment.submit', [
                                                                             'userID' => auth()->user()->id,
                                                                             'assignmentTableID' => $manageCourse->id,
                                                                             'courseID' => $manageCourse->course_id,
-                                                                            'classworkID' => $content['content_id']
-                                                                        ]) }}" method="POST">
-                                                                            @csrf
-                                                                                    @php
-                                                                                        $num=0;
-                                                                                        $score = \App\Models\StudentScore::where('classwork_id',
-                                                                                            $content['content_id'],
-                                                                                        )
-                                                                                            ->where('student_id', Auth::id())
-                                                                                            ->first();
-                                                                                    @endphp
-                                                                                    <div class="w-80 bg-white p-6 rounded-md  flex flex-col items-end w-full">
-                                                                                        <h2 class="text-xl font-semibold mb-4 text-right">Your Score</h2>
-                                                                                        <p class="text-4xl font-bold text-blue-600 text-right">
-                                                                                             @if ($score)
-                                                                                                {{ $score->score }}/{{$score->total_score}}
-                                                                                            @endif
-                                                                                        </p>
-                                                                                    </div>
-                                                                                   
-                                                                            @foreach ($questions as $questionIndex => $question)
-                                                                                    
-                                                                                @if ($content['content_id'] === $question->classwork_id)
-                                                                                @php
-    
-                                                                                    
-                                                                                    $num++;
-                                                                                    @endphp
-                                                                                    <div class="mb-6">
-                                                                                        <p class="text-xl font-semibold">
-                                                                                            {{ $num }}. {{ $question->text }}
-                                                                                        </p>
-
-                                                                                         @foreach ($question->choices as $choiceIndex => $choice)
-                                                                                            @php
-                                                                                                $isUserAnswer = isset($userAnswers[$question->id]) && $userAnswers[$question->id] == $choice->id;
-                                                                                                $isCorrectAnswer = isset($correctAnswers[$question->id]) && $correctAnswers[$question->id] == $choice->id;
-                                                                                                $showAnswer = $isUserAnswer && !$isCorrectAnswer;
-                                                                                                
-                                                                                            @endphp
-                                                                                            <div class="flex items-center my-2">
-                                                                                                <input type="radio"
-                                                                                                    name="answers[{{ $question->id }}]"
-                                                                                                    id="choice_{{ $choice->id }}"
-                                                                                                    value="{{ $choice->id }}"
-                                                                                                    @if ($submitted1)
-                                                                                                        {{ $isUserAnswer ? 'checked' : '' }}
-                                                                                                    disabled>
-                                                                                                    @endif
-                                                                                                   
-                                                                                                <label for="choice_{{ $choice->id }}" class="ml-2 {{ $showAnswer ? 'text-red-600' : '' }}">
-                                                                                                    {{ $choice->text }}
-                                                                                                    @if ($submitted1)
-                                                                                                         
-                                                                                                    @if ($isCorrectAnswer)
-                                                                                                        <span class="text-sm text-green-600">(Correct)</span>
-                                                                                                    
-                                                                                                    @endif
-                                                                                                    @endif
-                                                                                                   
-                                                                                                </label>
-                                                                                            </div>
-                                                                                        @endforeach
-                                                                                    </div>
-                                                                                @endif
-                                                                            @endforeach
-                                                                            
-                                                                            <div class="mt-8">
-                                                                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full"
-                                                                                @if ($submitted1)
-                                                                                    disabled
-                                                                                @endif
-                                                                                >
-                                                                                    Submit Answers
-                                                                                </button>
+                                                                            'classworkID' => $content['content_id'],
+                                                                        ]) }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        @php
+                                                                            $num = 0;
+                                                                            $score = \App\Models\StudentScore::where(
+                                                                                'classwork_id',
+                                                                                $content['content_id'],
+                                                                            )
+                                                                                ->where('student_id', Auth::id())
+                                                                                ->first();
+                                                                        @endphp
+                                                                        @if ($submitted1)
+                                                                            <div
+                                                                                class="w-80 bg-white p-6 rounded-md  flex flex-col items-end w-full">
+                                                                                <h2
+                                                                                    class="text-xl font-semibold mb-4 text-right">
+                                                                                    Your Score</h2>
+                                                                                <p
+                                                                                    class="text-4xl font-bold text-blue-600 text-right">
+                                                                                    @if ($score)
+                                                                                        {{ $score->score }}/{{ $score->total_score }}
+                                                                                    @endif
+                                                                                </p>
                                                                             </div>
-                                                                        </form>
-                                                                    </div>
-                                                               
+                                                                        @endif
+                                                                        @foreach ($questions as $questionIndex => $question)
+                                                                            @if ($content['content_id'] === $question->classwork_id)
+                                                                                @php
+
+                                                                                    $num++;
+                                                                                @endphp
+                                                                                <div class="mb-6">
+                                                                                    <p class="text-xl font-semibold">
+                                                                                        {{ $num }}.
+                                                                                        {{ $question->text }}
+                                                                                    </p>
+
+                                                                                    @foreach ($question->choices as $choiceIndex => $choice)
+                                                                                        @php
+                                                                                            $isUserAnswer =
+                                                                                                isset(
+                                                                                                    $userAnswers[
+                                                                                                        $question->id
+                                                                                                    ],
+                                                                                                ) &&
+                                                                                                $userAnswers[
+                                                                                                    $question->id
+                                                                                                ] == $choice->id;
+                                                                                            $isCorrectAnswer =
+                                                                                                isset(
+                                                                                                    $correctAnswers[
+                                                                                                        $question->id
+                                                                                                    ],
+                                                                                                ) &&
+                                                                                                $correctAnswers[
+                                                                                                    $question->id
+                                                                                                ] == $choice->id;
+                                                                                            $showAnswer =
+                                                                                                $isUserAnswer &&
+                                                                                                !$isCorrectAnswer;
+
+                                                                                        @endphp
+                                                                                        <div
+                                                                                            class="flex items-center my-2">
+                                                                                            <input type="radio"
+                                                                                                name="answers[{{ $question->id }}]"
+                                                                                                id="choice_{{ $choice->id }}"
+                                                                                                value="{{ $choice->id }}"
+                                                                                                @if ($submitted1) {{ $isUserAnswer ? 'checked' : '' }}
+                                                                                                    disabled> @endif
+                                                                                                <label
+                                                                                                for="choice_{{ $choice->id }}"
+                                                                                                class="ml-2 {{ $showAnswer ? 'text-red-600' : '' }}">
+                                                                                            {{ $choice->text }}
+                                                                                            @if ($submitted1)
+                                                                                                @if ($isCorrectAnswer)
+                                                                                                    <span
+                                                                                                        class="text-sm text-green-600">(Correct)</span>
+                                                                                                @endif
+                                                                                            @endif
+
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                </div>
+                                                                            @endif
+                                                                        @endforeach
+
+                                                                        <div class="mt-8">
+                                                                            <button type="submit"
+                                                                                class="bg-blue-500 text-white px-4 py-2 rounded w-full"
+                                                                                @if ($submitted1) disabled @endif>
+                                                                                Submit Answers
+                                                                            </button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            @endif
+                                                            @if ($content['type_of_classwork'] === 'Practice Problem')
+                                                                <button type="submit"
+                                                                    class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full"><a
+                                                                        href="{{ route('student.classwork.index', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classworkID' => $content['content_id']]) }}"
+                                                                        class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">Start</a></button>
                                                             @endif
                                                         @endif
-                                                        @if ($content['type_of_classwork'] === 'Practice Problem')
-                                                            <button type="submit"
-                                                                class="px-4 py-2 mt-5 bg-green-300 text-black-500 rounded-md w-full"><a
-                                                                    href="{{ route('student.classwork.index', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classworkID' => $content['content_id']]) }}"
-                                                                    class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">Start</a></button>
-                                                        @endif
+
                                                         @if ($type === 'Announcement')
                                                             <div class="flex justify-end mt-4">
                                                                 <button type="submit"
@@ -1101,4 +1033,111 @@
     function formatText(command) {
         document.execCommand(command, false, null);
     }
+</script>
+
+<script>
+    var app;
+
+    window.addEventListener("load", function() {
+        var params = {
+            "appName": "graphing",
+            "width": 800,
+            "height": 600,
+            "showToolBar": true,
+            "showAlgebraInput": true,
+            "showMenuBar": true
+        };
+        app = new GGBApplet(params, true);
+        app.inject('geogebra');
+    });
+
+    document.getElementById('graphType').addEventListener('change', showParameters);
+    document.getElementById('updateGraph').addEventListener('click', updateGraph);
+
+    function showParameters() {
+        const graphType = document.getElementById('graphType').value;
+        const parametersDiv = document.getElementById('parameters');
+        parametersDiv.innerHTML = ''; // Clear existing inputs
+
+        if (graphType === 'parabola') {
+            parametersDiv.innerHTML = `
+                    <label for="a">a:</label>
+                    <input type="number" id="a" value="1"><br>
+                    <label for="b">b:</label>
+                    <input type="number" id="b" value="0"><br>
+                    <label for="c">c:</label>
+                    <input type="number" id="c" value="0"><br>
+                `;
+        } else if (graphType === 'line') {
+            parametersDiv.innerHTML = `
+                    <label for="m">Slope (m):</label>
+                    <input type="number" id="m" value="1"><br>
+                    <label for="c">Y-intercept (c):</label>
+                    <input type="number" id="c" value="0"><br>
+                `;
+        } else if (graphType === 'sine') {
+            parametersDiv.innerHTML = `
+                    <label for="amplitude">Amplitude:</label>
+                    <input type="number" id="amplitude" value="1"><br>
+                    <label for="frequency">Frequency:</label>
+                    <input type="number" id="frequency" value="1"><br>
+                `;
+        } else if (graphType === 'circle') {
+            parametersDiv.innerHTML = `
+                    <label for="h">Center x (h):</label>
+                    <input type="number" id="h" value="0"><br>
+                    <label for="k">Center y (k):</label>
+                    <input type="number" id="k" value="0"><br>
+                    <label for="r">Radius (r):</label>
+                    <input type="number" id="r" value="1"><br>
+                `;
+        }
+
+    }
+
+    function updateGraph() {
+        const graphType = document.getElementById('graphType').value;
+        let functionString = '';
+
+        if (graphType === 'parabola') {
+            const a = document.getElementById('a').value;
+            const b = document.getElementById('b').value;
+            const c = document.getElementById('c').value;
+            functionString = `${a}*x^2 + ${b}*x + ${c}`;
+        } else if (graphType === 'line') {
+            const m = document.getElementById('m').value;
+            const c = document.getElementById('c').value;
+            functionString = `${m}*x + ${c}`;
+        } else if (graphType === 'sine') {
+            const amplitude = document.getElementById('amplitude').value;
+            const frequency = document.getElementById('frequency').value;
+            functionString = `${amplitude}*sin(${frequency}*x)`;
+        } else if (graphType === 'circle') {
+            const h = document.getElementById('h').value;
+            const k = document.getElementById('k').value;
+            const r = document.getElementById('r').value;
+            // GeoGebra command for a circle
+            functionString = `((x - ${h})^2 + (y - ${k})^2 = ${r}^2)`;
+
+
+
+        }
+        setTimeout(function() {
+            try {
+                // Execute commands
+                if (graphType === 'circle') {
+                    ggbApplet.evalCommand(`${functionString}`);
+                } else {
+                    ggbApplet.evalCommand(`f(x) = ${functionString}`);
+                }
+
+            } catch (error) {
+                console.error('Error executing command:', error);
+            }
+        }, 1000);
+        // app.evalCommand(`f(x) = ${functionString}`);
+    }
+
+    // Initialize with default parameters
+    showParameters();
 </script>

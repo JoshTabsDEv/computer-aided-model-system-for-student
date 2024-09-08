@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\AssignCourseContent;
 use App\Models\CourseClassworkFiles;
 use App\Models\StudentScore;
+use App\Models\SubClasswork;
 use App\Models\Question;
 
 class CourseContentClasswork extends Model
@@ -46,5 +47,10 @@ class CourseContentClasswork extends Model
     public function questions()
     {
         return $this->hasMany(Question::class);
+    }   
+
+    public function subClasswork()
+    {
+        return $this->hasMany(SubClasswork::class);
     }   
 }

@@ -49,7 +49,7 @@ class StudentCourseController extends Controller
 
         
 
-        $courseContent = AssignCourseContent::where('course_assignments_id', $assignmentTableID)
+        $courseContent = AssignCourseContent::where('course_assignment_id', $assignmentTableID)
             ->with('courseAssignment')
             ->with('courseAnnouncements')
             ->orderBy('created_at', 'desc')
@@ -250,13 +250,12 @@ class StudentCourseController extends Controller
     {
         $teacherId = Auth::id();
 
-        $manageCourse = CourseAssignment::where('teacher_id', $teacherId)
-            ->where('id', $assignmentTableID)
-            ->where('course_id', $courseID)
+         $manageCourse = CourseAssignment::where('id', $assignmentTableID)
             ->with('course')
+            ->with('teacher')
             ->firstOrFail();
 
-        $courseContent = AssignCourseContent::where('course_assignments_id', $assignmentTableID)
+        $courseContent = AssignCourseContent::where('course_assignment_id', $assignmentTableID)
             ->with(['courseAssignment', 'courseAnnouncements', 'courseClasswork'])
             ->orderBy('created_at', 'desc')
             ->get();

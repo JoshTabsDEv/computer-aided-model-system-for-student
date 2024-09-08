@@ -183,15 +183,15 @@
                                     <div class="choices mt-4">
                                         <!-- Example of a choice block -->
                                         <div class="choice-block flex items-center mt-2">
-                                            <input type="radio" name="correct_choice[0]" value="0" id="correct_choice1"
-                                                class="mr-2" required>
+                                            <input type="radio" name="correct_choice[0]" value="0"
+                                                id="correct_choice1" class="mr-2" required>
                                             <input type="text" name="choices[0][]" id="choice1"
                                                 class="block w-full border border-gray-300 rounded py-2 px-3 text-black"
                                                 required>
                                         </div>
                                         <div class="choice-block flex items-center mt-2">
-                                            <input type="radio" name="correct_choice[0]" value="1" id="correct_choice2"
-                                                class="mr-2" required>
+                                            <input type="radio" name="correct_choice[0]" value="1"
+                                                id="correct_choice2" class="mr-2" required>
                                             <input type="text" name="choices[0][]" id="choice2"
                                                 class="block w-full border border-gray-300 rounded py-2 px-3 text-black"
                                                 required>
@@ -207,6 +207,10 @@
 
                             <button type="button" onclick="addQuestion()"
                                 class="mt-4 bg-green-500 text-white px-4 py-2 rounded w-full   ">Add Question</button>
+                                 <div class="mt-4">
+                            <label for="deadline" class="block text-gray-700">Set Deadline:</label>
+                            <input type="datetime-local" id="deadline" name="deadline" class="block w-full border border-gray-300 rounded py-2 px-3 mt-1 focus:outline-none focus:border-blue-500 text-black" required>
+                        </div>
                         </div>
 
                         <div id="moduleUI" class="hidden">
@@ -225,33 +229,19 @@
                                     onclick="formatText('underline')" title="Underline"><u>U</u></button>
                             </div>
 
-                            <div class="mt-4">
-                                <label for="deadlineModule" class="block text-gray-700">Set Deadline:</label>
-                                <input type="datetime-local" id="deadline" name="deadline"
-                                    class="block w-full border border-gray-300 rounded py-2 px-3 mt-1 focus:outline-none focus:border-blue-500 text-black">
-                            </div>
+                            
                             <div class="mt-4">
                                 <label class="block text-gray-700">
-                                    Classwork File
+                                    Module File
                                 </label>
                                 <input id="files" type="file" name="files[]"
                                     class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:disabled:opacity-50 file:disabled:pointer-events-none dark:text-neutral-500 dark:file:bg-blue-500 dark:hover:file:bg-blue-400"
-                                    multiple onchange="displaySelectedFiles(this)">
+                                >
                             </div>
-                            <div class="mt-4">
-                                <label class="block text-gray-700">
-                                    Solution (*only if practice problem is selected)
-                                </label>
-                                <input id="solution_files" type="file" name="solution_files[]"
-                                    class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:disabled:opacity-50 file:disabled:pointer-events-none dark:text-neutral-500 dark:file:bg-blue-500 dark:hover:file:bg-blue-400"
-                                    multiple>
-                            </div>
-
                             <div id="dynamicInputContainer" class="mt-4">
                                 <!-- Dynamic input fields will be added here -->
                             </div>
-                            <button type="button" class="add-button bg-green-500 text-white px-4 py-2 rounded mt-4"
-                                onclick="addInputField()"> <i class="fas fa-plus"></i> Add Input Field</button>
+                            
                         </div>
 
                         <input type="hidden" name="content2" id="content2">
@@ -472,26 +462,248 @@
                                                             <?php echo $content['content']; ?>
 
                                                         </div>
+                                                        <?php
+                                                            $subClasswork = \App\Models\SubClasswork::where(
+                                                                'classwork_id',
+                                                                $content['content_id'],
+                                                            )->get();
+
+                                                            
+                                                            $subClasswork1 = \App\Models\SubClasswork::where(
+                                                                'classwork_id',
+                                                                $content['content_id'],
+                                                            )->first();
+
+                                                           
+                                                        ?>
                                                         <?php if($type === 'Classwork'): ?>
-                                                            <?php $__currentLoopData = $file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php if($content['type_of_classwork'] === 'Practice Problem'): ?>
+                                                                <?php $__currentLoopData = $subClasswork; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $subClassworks): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                    <?php
+                                                                        $solution = \App\Models\Solution::where(
+                                                                            'sub_classwork_id',
+                                                                            $subClassworks->id,
+                                                                        )->first();
+                                                                        $files = \App\Models\CourseClassworkFiles::where(
+                                                                            'sub_classwork_id',
+                                                                            $subClassworks->id,
+                                                                        )->first();
+                                                                        $submitted = \App\Models\StudentClasswork::where(
+                                                                            'sub_classwork_id',
+                                                                            $subClassworks->id,
+                                                                        )
+                                                                            ->where('student_id', Auth::id())
+                                                                            ->first();
+                                                                    ?>
+                                                                    <div class="p-4">
+
+                                                                        <div
+                                                                            class="bg-white rounded-lg shadow-lg p-6 h-full">
+                                                                            <?php if(!$submitted): ?>
+                                                                                
+                                                                            <?php endif; ?>
+                                                                            <form id="autoSubmitForm"
+                                                                                action="<?php echo e(route('student.student.postAnswer', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classwork_id' => $subClassworks->classwork_id, 'subClassworkID' => $subClassworks->id])); ?> "
+                                                                                method="post"><?php echo csrf_field(); ?></form>
+
+
+                                                                            <div class="flex items-center mb-2">
+                                                                                <h3
+                                                                                    class="text-lg font-semibold text-gray-800">
+                                                                                    <?php echo e($index + 1); ?>.</h3>
+                                                                            </div>
+                                                                            <div
+                                                                                class="p-2 rounded h-auto text-lg bg-white overflow-y-auto text-black">
+                                                                                <?php echo $subClassworks->content; ?>
+
+                                                                            </div>
+                                                                            <li
+                                                                                class="mb-2 flex items-center border rounded p-2">
+                                                                                <img src="<?php echo e(route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg'])); ?>"
+                                                                                    alt="<?php echo e($files->classwork_file); ?>"
+                                                                                    class="w-16 h-16 object-cover mr-3">
+                                                                                <div x-cloak x-data="{ showModal1: false, contentId: <?php echo e($subClassworks->classwork_id); ?> }">
+                                                                                    <a @click="showModal1 = true"
+                                                                                        class="text-blue-500 hover:underline"><?php echo e($files->classwork_file); ?></a>
+                                                                                    <div class="text-gray-500 text-sm">
+                                                                                        <?php echo e(strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION))); ?>
+
+                                                                                    </div>
+                                                                                    <div x-show="showModal1" x-cloak
+                                                                                        x-transition:enter="transition ease-out duration-300"
+                                                                                        x-transition:enter-start="opacity-0 transform scale-95"
+                                                                                        x-transition:enter-end="opacity-100 transform scale-100"
+                                                                                        x-transition:leave="transition ease-in duration-200"
+                                                                                        x-transition:leave-start="opacity-100 transform scale-100"
+                                                                                        x-transition:leave-end="opacity-0 transform scale-95"
+                                                                                        @click.away="showModal1 = false"
+                                                                                        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                                                                        <iframe frameborder="0"
+                                                                                            src="<?php echo e(route('teacher.classroom.files.show', ['id' => $files->id])); ?>#toolbar=0&scrollbar=10&view=FitH"
+                                                                                            width="600"
+                                                                                            height="800"
+                                                                                            style="overflow: auto;"></iframe>
+                                                                                        <div
+                                                                                            class="fixed top-0 right-0 m-4">
+                                                                                            <button
+                                                                                                class="close-btn flex items-center justify-center rounded-full"
+                                                                                                @click="showModal1 = false">
+                                                                                                <svg class="w-6 h-6 text-white"
+                                                                                                    fill="none"
+                                                                                                    stroke="currentColor"
+                                                                                                    viewBox="0 0 24 24"
+                                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                                    <path
+                                                                                                        stroke-linecap="round"
+                                                                                                        stroke-linejoin="round"
+                                                                                                        stroke-width="2"
+                                                                                                        d="M6 18L18 6M6 6l12 12">
+                                                                                                    </path>
+                                                                                                </svg>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        </div>
+                                                                    </div>
+                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php endif; ?>
+                                                            <?php if($content['type_of_classwork'] ==="Module"): ?>
+                                                                 <?php $__currentLoopData = $file; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $files): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 
                                                                 <?php if($content['content_id'] === $files->classwork_id): ?>
                                                                     <li
-                                                                        class="mb-2 flex items-center border rounded p-2">
-                                                                        <img src="<?php echo e(route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg'])); ?>"
-                                                                            alt="<?php echo e($files->classwork_file); ?>"
-                                                                            class="w-16 h-16 object-cover mr-3">
-                                                                        <div>
-                                                                            <a href="<?php echo e(url('/classroom/files/' . $files->id)); ?>"
-                                                                                class="text-blue-500 hover:underline"><?php echo e($files->classwork_file); ?></a>
-                                                                            <div class="text-gray-500 text-sm">
-                                                                                <?php echo e(strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION))); ?>
+                                                                                class="mb-2 flex items-center border rounded p-2">
+                                                                                <img src="<?php echo e(route('thumbnails.show', ['filename' => $files->classwork_file . '.jpg'])); ?>"
+                                                                                    alt="<?php echo e($files->classwork_file); ?>"
+                                                                                    class="w-16 h-16 object-cover mr-3">
+                                                                                <div x-cloak x-data="{ showModal1: false, contentId: <?php echo e($content['content_id']); ?> }">
+                                                                                    <a @click="showModal1 = true"
+                                                                                        class="text-blue-500 hover:underline"><?php echo e($files->classwork_file); ?></a>
+                                                                                    <div class="text-gray-500 text-sm">
+                                                                                        <?php echo e(strtoupper(pathinfo($files->classwork_file, PATHINFO_EXTENSION))); ?>
 
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
+                                                                                    </div>
+                                                                                    <div x-show="showModal1" x-cloak
+                                                                                        x-transition:enter="transition ease-out duration-300"
+                                                                                        x-transition:enter-start="opacity-0 transform scale-95"
+                                                                                        x-transition:enter-end="opacity-100 transform scale-100"
+                                                                                        x-transition:leave="transition ease-in duration-200"
+                                                                                        x-transition:leave-start="opacity-100 transform scale-100"
+                                                                                        x-transition:leave-end="opacity-0 transform scale-95"
+                                                                                        @click.away="showModal1 = false"
+                                                                                        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                                                                        <iframe frameborder="0"
+                                                                                            src="<?php echo e(route('teacher.classroom.files.show', ['id' => $files->id])); ?>#toolbar=0&scrollbar=10&view=FitH"
+                                                                                            width="600"
+                                                                                            height="800"
+                                                                                            style="overflow: auto;"></iframe>
+                                                                                        <div
+                                                                                            class="fixed top-0 right-0 m-4">
+                                                                                            <button
+                                                                                                class="close-btn flex items-center justify-center rounded-full"
+                                                                                                @click="showModal1 = false">
+                                                                                                <svg class="w-6 h-6 text-white"
+                                                                                                    fill="none"
+                                                                                                    stroke="currentColor"
+                                                                                                    viewBox="0 0 24 24"
+                                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                                    <path
+                                                                                                        stroke-linecap="round"
+                                                                                                        stroke-linejoin="round"
+                                                                                                        stroke-width="2"
+                                                                                                        d="M6 18L18 6M6 6l12 12">
+                                                                                                    </path>
+                                                                                                </svg>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
                                                                 <?php endif; ?>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php endif; ?>
+                                                            <?php if($content['type_of_classwork'] === 'Assignment'): ?>
+                                                                    
+                                                                    
+                                                               
+                                                                    <div class="container mx-auto p-6">
+                                                                        <h2 class="text-2xl font-bold mb-6">
+                                                                            Assignment</h2>
+
+                                                                        <form action="<?php echo e(route('student.assignment.submit', [
+                                                                            'userID' => auth()->user()->id,
+                                                                            'assignmentTableID' => $manageCourse->id,
+                                                                            'courseID' => $manageCourse->course_id,
+                                                                            'classworkID' => $content['content_id']
+                                                                        ])); ?>" method="POST">
+                                                                            <?php echo csrf_field(); ?>
+                                                                                    <?php
+                                                                                        $num=0;
+                                                                                        $questions = \App\Models\Question::where('classwork_id',
+                                                                                            $content['content_id'],
+                                                                                        )
+                                                                                           
+                                                                                            ->get();
+                                                                                    ?>
+                                                                            <?php if($questions): ?>
+                                                                                <?php $__currentLoopData = $questions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $questionIndex => $question): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                                    
+                                                                                <?php if($content['content_id'] === $question->classwork_id): ?>
+                                                                                <?php
+    
+                                                                                    
+                                                                                    $num++;
+                                                                                    ?>
+                                                                                    <div class="mb-6">
+                                                                                        <p class="text-xl font-semibold">
+                                                                                            <?php echo e($num); ?>. <?php echo e($question->text); ?>
+
+                                                                                        </p>
+
+                                                                                         <?php $__currentLoopData = $question->choices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $choiceIndex => $choice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                                            <?php
+                                                                                                $isUserAnswer = isset($userAnswers[$question->id]) && $userAnswers[$question->id] == $choice->id;
+                                                                                                $isCorrectAnswer = isset($correctAnswers[$question->id]) && $correctAnswers[$question->id] == $choice->id;
+                                                                                                $showAnswer = $isUserAnswer && !$isCorrectAnswer;
+                                                                                                
+                                                                                            ?>
+                                                                                            <div class="flex items-center my-2">
+                                                                                                <input type="radio"
+                                                                                                    name="answers[<?php echo e($question->id); ?>]"
+                                                                                                    id="choice_<?php echo e($choice->id); ?>"
+                                                                                                    value="<?php echo e($choice->id); ?>"
+                                                                                                   
+                                                                                                    disabled>
+                                                                                                  
+                                                                                                   
+                                                                                                <label for="choice_<?php echo e($choice->id); ?>" class="ml-2 <?php echo e($showAnswer ? 'text-red-600' : ''); ?>">
+                                                                                                    <?php echo e($choice->text); ?>
+
+                                                                                                   
+                                                                                                         
+                                                                                                    <?php if($isCorrectAnswer): ?>
+                                                                                                        <span class="text-sm text-green-600">(Correct)</span>
+                                                                                                    
+                                                                                                    <?php endif; ?>
+                                                                                                   
+                                                                                                   
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                                    </div>
+                                                                                <?php endif; ?>
+                                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                            <?php endif; ?>     
+                                                                            
+                                                                            
+                                                                            
+                                                                        </form>
+                                                                    </div>
+                                                               
+                                                            <?php endif; ?>
+                                                           
                                                         <?php else: ?>
                                                         <?php endif; ?>
 
@@ -535,7 +747,8 @@
                                                                     </div>
 
                                                                     <!-- Modal body -->
-                                                                    <form
+                                                                   
+                                                                        <form
                                                                         id="updateForm_<?php echo e($type); ?>_<?php echo e($content['content_id']); ?>"
                                                                         action="<?php echo e(route('teacher.teacher.updateAnnouncement', [
                                                                             'userID' => auth()->user()->id,
@@ -548,7 +761,9 @@
                                                                         method="POST">
                                                                         <?php echo csrf_field(); ?>
                                                                         <?php echo method_field('PUT'); ?>
-
+                                                                        <?php
+                                                                            // dd($content);
+                                                                        ?>
                                                                         <div x-data="{
                                                                             message: `<?php echo $content['content']; ?>`,
                                                                             initialMessage: `<?php echo $content['content']; ?>`,
@@ -596,6 +811,10 @@
                                                                             </div>
                                                                         </div>
                                                                     </form>
+
+                                                                   
+                                                                   
+                                                                    
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -724,7 +943,7 @@
     function logClasswork(event) {
 
         event.preventDefault();
-        
+
         const element = document.getElementById('editor2');
         const selectedOption = element.options[element.selectedIndex].getAttribute('data-id');
 
@@ -1080,8 +1299,8 @@
         const selectedValue = this.value;
         if (selectedValue === 'Practice Problem') {
             document.getElementById('practiceProblemUI').classList.remove('hidden');
-            document.getElementById('deadline').required = false;
             document.getElementById('question').required = false;
+            document.getElementById('deadline').required = false;
             document.getElementById('choice1').required = false;
             document.getElementById('correct_choice1').required = false;
             document.getElementById('choice2').required = false;
@@ -1089,12 +1308,13 @@
 
         } else if (selectedValue === 'Assignment') {
             document.getElementById('assignmentUI').classList.remove('hidden');
-            
+
 
         } else if (selectedValue === 'Module') {
             document.getElementById('moduleUI').classList.remove('hidden');;
             document.getElementById('question').required = false;
             document.getElementById('choice1').required = false;
+            document.getElementById('deadline').required = false;
             document.getElementById('correct_choice1').required = false;
             document.getElementById('choice2').required = false;
             document.getElementById('correct_choice2').required = false;
@@ -1111,7 +1331,7 @@
         const choiceHTML = `
         <div class="choice-block flex items-center mt-2">
             <input type="radio" name="correct_choice[${questionIndex}]" value="${choiceIndex}" class="mr-2">
-            <input type="text" name="choices[${questionIndex}][]" class="block w-full border border-gray-300 rounded py-2 px-3 textt-black" required>
+            <input type="text" name="choices[${questionIndex}][]" class="block w-full border border-gray-300 rounded py-2 px-3 text-black" required>
         </div>
     `;
         questionBlock.querySelector('.choices').insertAdjacentHTML('beforeend', choiceHTML);

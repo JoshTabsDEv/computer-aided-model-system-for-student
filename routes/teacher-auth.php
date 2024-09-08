@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\Teacher\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Teacher\Auth\RegisteredUserController;
 use App\Http\Controllers\Teacher\ProfileController;
@@ -40,6 +41,7 @@ Route::middleware(['auth:teacher', 'verified'])->prefix('teacher')->name('teache
     Route::put('/update-announcement/{userID}/{type}/{assignmentTableID}/{courseID}/{contentID}/{announcementID}', [ManageCourseController::class, 'updateAnnouncement'])
     ->name('teacher.updateAnnouncement'); //update announcement
 
+
     //     Classwork Routes
     // Route::resource('classwork/{userID}/{assignmentTableID}/{courseID}', ManageClassworkController::class)->names([
     //     'index' => 'classwork.index',
@@ -51,6 +53,9 @@ Route::middleware(['auth:teacher', 'verified'])->prefix('teacher')->name('teache
 
     Route::get('/manage-classwork/{userID}/{assignmentTableID}/{courseID}', [ManageClassworkController::class, 'index'])
     ->name('classwork.index');
+
+    Route::get('/classroom/files/{id}', [FileController::class, 'showFile'])
+    ->name('classroom.files.show');
 
     Route::get('/classwork/{id}', [StudentCourseController::class, 'showClasswork'])->name('classwork.show');
 

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Course;
-use App\Models\courseAssignment;
+use App\Models\CourseAssignment;
 use App\Models\user;
 
 class StudentByCourse extends Model
@@ -29,9 +29,17 @@ class StudentByCourse extends Model
         return $this->belongsTo(Course::class,'course_id', 'id');
     }
 
-    public function courseAssignment()
+     public function courseAssignment()
     {
-        return $this->belongsTo(courseAssignment::class, 'course_assignment_id', 'id');
-        // return $this->belongsTo(Course::class);
+        return $this->belongsTo(CourseAssignment::class);
     }
+
+    public function assignCourseContent()
+    {
+        // Ensure courseAssignment exists before accessing assignCourseContent
+        
+            return $this->courseAssignment->assignCourseContent();
+     
+    }   
+
 }

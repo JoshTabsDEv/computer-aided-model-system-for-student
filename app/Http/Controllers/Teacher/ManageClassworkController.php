@@ -31,7 +31,7 @@ class ManageClassworkController extends Controller
             ->with('course')
             ->firstOrFail();
 
-        $courseContent = AssignCourseContent::where('course_assignments_id', $assignmentTableID)
+        $courseContent = AssignCourseContent::where('course_assignment_id', $assignmentTableID)
             ->with(['courseAssignment', 'courseAnnouncements', 'courseClasswork'])
             ->orderBy('created_at', 'desc')
             ->get();

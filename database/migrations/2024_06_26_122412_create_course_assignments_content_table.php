@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('course_assignments_content', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_assignments_id');
+            $table->unsignedBigInteger('course_assignment_id');
             $table->timestamps();
 
-            $table->foreign('course_assignments_id')->references('id')->on('course_assignments')->onDelete('restrict');            
+            $table->foreign('course_assignment_id')->references('id')->on('course_assignments')->onDelete('restrict');            
         });
     }
 

@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
 
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/login', function () {
+    return view('auth/login');
 });
 
 
@@ -90,7 +90,7 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
 });
 
 Route::middleware(['auth', 'verified'])->name('student.')->group(function () {
-    
+    Route::get('classwork/{id}', [FileController::class, 'showFile']);
     Route::get('/dashboard', function () {
         return view('student.dashboard')->with('success', 'Welcome to your dashboard!');
     })->name('dashboard');

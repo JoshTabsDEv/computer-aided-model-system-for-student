@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Http\Response;
 use App\Models\CourseClassworkFiles;
 use App\Models\StudentClasswork;
 
 class FileController extends Controller
 {
+   
+
     public function showThumbnail($filename)
     {
         $path = 'public/classwork_files/thumbnails/' . $filename;
@@ -25,6 +28,7 @@ class FileController extends Controller
 
     public function showFile($id)
     {
+    
         // Fetch the file record from the database
         $file = CourseClassworkFiles::findOrFail($id);
 
@@ -35,7 +39,9 @@ class FileController extends Controller
         if (!file_exists($filePath)) {
             abort(404);
         }
-
+        $fileUrl = url('classwork/file/' . $file->classwork_file);
+        
+         
         // Return the file as a response
         return response()->file($filePath);
     }

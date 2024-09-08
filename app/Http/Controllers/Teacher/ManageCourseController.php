@@ -41,7 +41,7 @@ class ManageCourseController extends Controller
 
             
 
-        $courseContent = AssignCourseContent::where('course_assignments_id', $assignmentTableID)
+        $courseContent = AssignCourseContent::where('course_assignment_id', $assignmentTableID)
                             ->with('courseAssignment')
                             ->with('courseAnnouncements')
                             ->with('courseClasswork')
@@ -154,7 +154,8 @@ class ManageCourseController extends Controller
             $rules = [
                  'questions.*' => 'required|string',
                 'choices.*.*' => 'required|string',
-                'correct_choice.*' => 'required'
+                'correct_choice.*' => 'required',
+                'deadline' => 'required|date_format:Y-m-d\TH:i',
                 
             ];
 
@@ -276,6 +277,7 @@ class ManageCourseController extends Controller
              $classwork = CourseContentClasswork::create([
                 'classwork' => '',
                 'type' => $request->input('content2'),
+                'deadline' =>$request->input('deadline')
             ]);
             // dd($request->all());
         // Loop through each question
@@ -407,7 +409,7 @@ class ManageCourseController extends Controller
 
 
             AssignCourseContent::create([
-                'course_assignments_id' => $assignmentTableID,
+                'course_assignment_id' => $assignmentTableID,
                 'classwork_id' => $classwork->id,
             ]);
         // }
@@ -493,7 +495,7 @@ public function removeAnnouncement($userID, $type, $assignmentTableID, $courseID
     //     }
     // }
 
-    public function updateAnnouncement(Request $request, $userID, $type, $assignmentTableID, $courseID, $contentID, $announcementID)
+    public function updateAnnouncement(Request $request, $userID, $type,$assignmentTableID, $courseID, $contentID, $announcementID)
     {
         // Validate the request
         $request->validate([
@@ -509,7 +511,7 @@ public function removeAnnouncement($userID, $type, $assignmentTableID, $courseID
             return redirect()->back()->with('success', 'Content updated successfully.');
         } elseif ($type === 'Classwork') {
             // Update classwork
-            $classwork = CourseContentClasswork::findOrFail($announcementID);
+            $classwork = CourseContentClasswork::findOrFail($announcementID);   
             $classwork->classwork = $request->input('content');
             $classwork->save();
             return redirect()->back()->with('success', 'Content updated successfully.');
@@ -519,6 +521,7 @@ public function removeAnnouncement($userID, $type, $assignmentTableID, $courseID
         return redirect()->back()->with('success', 'Content updated successfully.');
     }
 
+    
 
 
     /**

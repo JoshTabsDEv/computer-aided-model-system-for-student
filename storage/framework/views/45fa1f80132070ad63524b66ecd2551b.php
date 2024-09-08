@@ -1,6 +1,5 @@
 
 
-
 <?php
     $user = Auth::user();
 ?>
@@ -174,7 +173,7 @@
                             <?php if(!$submitted): ?>
                                 <div id="countdown<?php echo e($subClassworks->id); ?>"
                                     class="text-lg font-semibold text-red-500 dark:text-red-400 mb-4"
-                                    x-data="{ timer: 5, interval: null, expired: false }" x-init="interval = setInterval(() => {
+                                    x-data="{ timer: 5+, interval: null, expired: false }" x-init="interval = setInterval(() => {
                                         if (timer > 0) {
                                             timer--;
                                             let hours = Math.floor(timer / 3600);
@@ -236,7 +235,6 @@
                                     </div>
                                 </div>
                             </li>
-
                             <?php if($submitted): ?>
                                 <div class="mt-4">
                                     <p class="text-gray-600 font-semibold">Submitted Files:</p>
@@ -289,7 +287,6 @@
                                     </div>
                                 </div>
                             <?php endif; ?>
-
                             <form
                                 action="<?php echo e(route('student.student.postAnswer', ['userID' => auth()->user()->id, 'assignmentTableID' => $manageCourse->id, 'courseID' => $manageCourse->course_id, 'classwork_id' => $subClassworks->classwork_id, 'subClassworkID' => $subClassworks->id])); ?>"
                                 method="POST" enctype="multipart/form-data">

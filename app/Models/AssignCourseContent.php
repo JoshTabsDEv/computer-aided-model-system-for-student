@@ -15,7 +15,7 @@ class AssignCourseContent extends Model
     protected $table = 'course_assignments_content';
 
     protected $fillable = [
-        'course_assignments_id',
+        'course_assignment_id',
         'announcement_id',
         'classwork_id',
         
@@ -23,7 +23,7 @@ class AssignCourseContent extends Model
 
     public function courseAssignment()
     {
-        return $this->belongsTo(CourseAssignment::class , 'course_assignments_id', 'id');
+        return $this->belongsTo(CourseAssignment::class , 'course_assignment_id', 'id');
     }
 
     public function courseAnnouncements()
